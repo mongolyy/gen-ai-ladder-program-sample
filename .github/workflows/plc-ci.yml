@@ -1,0 +1,165 @@
+name: PLC 静的チェック & シミュレーション
+
+on:
+  push:
+    paths:
+      - 'out/**/*.st'
+      - 'out/**/*.csv'
+      - 'out/**/*.yaml'
+      - '.claude/skills/ladder-gen/examples/**'
+      - '.claude/skills/ladder-gen/scripts/**'
+      - '.github/workflows/plc-ci.yml'
+  pull_request:
+    paths:
+      - 'out/**/*.st'
+      - 'out/**/*.csv'
+      - 'out/**/*.yaml'
+      - '.claude/skills/ladder-gen/examples/**'
+      - '.claude/skills/ladder-gen/scripts/**'
+  workflow_dispatch:
+    inputs:
+      st_path:
+        description: 'ST ファイルのパス (例: out/my-project/03_program.st)'
+        required: false
+        default: ''
+
+jobs:
+  check-examples:
+    name: サンプル — 静的チェック & シミュレーション
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: 依存パッケージのインストール
+        run: pip install pyyaml matplotlib
+
+      # ---- motor-fwd-rev ----
+      - name: '[motor-fwd-rev] 静的チェック'
+        run: |
+          python .claude/skills/ladder-gen/scripts/static_check.py \
+            --st      .claude/skills/ladder-gen/examples/motor-fwd-rev/03_program.st \
+            --devices .claude/skills/ladder-gen/examples/motor-fwd-rev/02_device_master.csv \
+            --spec    .claude/skills/ladder-gen/examples/motor-fwd-rev/01_structured_spec.yaml \
+            --report  out-ci/motor-fwd-rev/static_check.txt
+        continue-on-error: false
+
+      - name: '[motor-fwd-rev] シミュレーション'
+        run: |
+          python .claude/skills/ladder-gen/scripts/simulate.py \
+            --st       .claude/skills/ladder-gen/examples/motor-fwd-rev/03_program.st \
+            --devices  .claude/skills/ladder-gen/examples/motor-fwd-rev/02_device_master.csv \
+            --scenario .claude/skills/ladder-gen/examples/motor-fwd-rev/05_scenario.yaml \
+            --chart    out-ci/motor-fwd-rev/timing_chart.png \
+            --log      out-ci/motor-fwd-rev/simulation.txt
+
+      # ---- conveyor-seq ----
+      - name: '[conveyor-seq] 静的チェック'
+        run: |
+          python .claude/skills/ladder-gen/scripts/static_check.py \
+            --st      .claude/skills/ladder-gen/examples/conveyor-seq/03_state_machine.st \
+            --devices .claude/skills/ladder-gen/examples/conveyor-seq/02_device_master.csv \
+            --spec    .claude/skills/ladder-gen/examples/conveyor-seq/01_structured_spec.yaml \
+            --report  out-ci/conveyor-seq/static_check.txt
+        continue-on-error: true  # TODO スキャンが入ると警告が出るため
+
+      - name: '[conveyor-seq] シミュレーション'
+        run: |
+          python .claude/skills/ladder-gen/scripts/simulate.py \
+            --st       .claude/skills/ladder-gen/examples/conveyor-seq/03_state_machine.st \
+            --devices  .claude/skills/ladder-gen/examples/conveyor-seq/02_device_master.csv \
+            --scenario .claude/skills/ladder-gen/examples/conveyor-seq/04_scenario.yaml \
+            --chart    out-ci/conveyor-seq/timing_chart.png \
+            --log      out-ci/conveyor-seq/simulation.txt
+
+      # ---- out/ 以下の生成物があれば一括チェック ----
+      - name: out/ 以下の ST ファイルを一括チェック
+        run: |
+          set +e
+          EXIT=0
+          for ST in $(find out/ -name "*.st" 2>/dev/null); do
+            DIR=$(dirname "$ST")
+            DEVICES=$(find "$DIR" -name "*device*master*.csv" | head -1)
+            SPEC=$(find "$DIR" -name "*.yaml" | head -1)
+            if [ -z "$DEVICES" ]; then
+              echo "[SKIP] $ST : デバイスマスタ CSV が見つかりません"
+              continue
+            fi
+            echo "=== $ST ==="
+            python .claude/skills/ladder-gen/scripts/static_check.py \
+              --st "$ST" --devices "$DEVICES" ${SPEC:+--spec "$SPEC"} \
+              --report "${ST%.st}_static_check.txt" || EXIT=1
+
+            SCENARIO=$(find "$DIR" -name "*scenario*.yaml" | head -1)
+            if [ -n "$SCENARIO" ]; then
+              python .claude/skills/ladder-gen/scripts/simulate.py \
+                --st "$ST" --devices "$DEVICES" --scenario "$SCENARIO" \
+                --chart "${ST%.st}_timing.png" \
+                --log   "${ST%.st}_simulation.txt"
+            fi
+          done
+          exit $EXIT
+
+      # ---- Artifacts ----
+      - name: 成果物をアップロード
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: plc-ci-results-${{ github.run_number }}
+          path: |
+            out-ci/**
+            out/**/*_static_check.txt
+            out/**/*_timing.png
+            out/**/*_simulation.txt
+          if-no-files-found: ignore
+          retention-days: 30
+
+      # ---- PRコメントにサマリを貼る ----
+      - name: PR コメントにサマリを投稿
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+
+            function readIfExists(p) {
+              try { return fs.readFileSync(p, 'utf8'); } catch { return null; }
+            }
+
+            const targets = [
+              { name: 'motor-fwd-rev',
+                check: 'out-ci/motor-fwd-rev/static_check.txt',
+                sim:   'out-ci/motor-fwd-rev/simulation.txt' },
+              { name: 'conveyor-seq',
+                check: 'out-ci/conveyor-seq/static_check.txt',
+                sim:   'out-ci/conveyor-seq/simulation.txt' },
+            ];
+
+            let body = '## PLC CI 結果\n\n';
+            for (const t of targets) {
+              body += `### ${t.name}\n`;
+              const chk = readIfExists(t.check);
+              if (chk) {
+                const ok = chk.includes('ERROR: 0');
+                body += `**静的チェック**: ${ok ? '✅ PASS' : '❌ FAIL'}\n`;
+                body += `<details><summary>詳細</summary>\n\n\`\`\`\n${chk}\n\`\`\`\n</details>\n\n`;
+              }
+              const sim = readIfExists(t.sim);
+              if (sim) {
+                body += `<details><summary>シミュレーションログ</summary>\n\n\`\`\`\n${sim.substring(0, 3000)}\n\`\`\`\n</details>\n\n`;
+              }
+              body += `📊 タイミングチャートは Artifacts からダウンロードできます。\n\n`;
+            }
+            body += `\n> Artifacts: [plc-ci-results-${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})\n`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body
+            });

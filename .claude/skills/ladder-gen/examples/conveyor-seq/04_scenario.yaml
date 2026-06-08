@@ -1,0 +1,55 @@
+# シミュレーションシナリオ: コンベア搬送制御 (状態機械)
+# simulate.py で使用する入力テストシナリオ
+
+meta:
+  name: コンベア搬送 状態遷移確認
+
+cycles: 35
+
+initial:
+  STATE: 0         # IDLE から開始
+  ESTOP: true      # B接点: 正常時 true
+  START_PB: false
+  STOP_PB: false
+  CONVEYOR: false
+  RUN_LAMP: false
+
+steps:
+  - at_cycle: 0
+    inputs:
+      ESTOP: true
+      START_PB: false
+  - at_cycle: 3
+    inputs:
+      START_PB: true    # 起動 → IDLE → RUNNING
+  - at_cycle: 4
+    inputs:
+      START_PB: false
+  - at_cycle: 12
+    inputs:
+      STOP_PB: true     # 停止 → RUNNING → STOPPING
+  - at_cycle: 13
+    inputs:
+      STOP_PB: false
+      CONVEYOR: false   # モータ停止完了 → STOPPING → IDLE
+  - at_cycle: 20
+    inputs:
+      START_PB: true    # 再起動
+  - at_cycle: 21
+    inputs:
+      START_PB: false
+  - at_cycle: 28
+    inputs:
+      ESTOP: false      # 非常停止 → RUNNING → STOPPING
+  - at_cycle: 31
+    inputs:
+      ESTOP: true       # 解除
+      CONVEYOR: false
+
+watch:
+  - START_PB
+  - STOP_PB
+  - ESTOP
+  - CONVEYOR
+  - RUN_LAMP
+  - STATE

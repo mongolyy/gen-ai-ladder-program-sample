@@ -1,0 +1,55 @@
+# シミュレーションシナリオ: モータ正逆運転制御
+# simulate.py で使用する入力テストシナリオ
+
+meta:
+  name: モータ正逆運転 基本動作確認
+
+cycles: 30
+
+initial:
+  ESTOP: true      # B接点: 正常時 true (解放状態)
+  START_FWD: false
+  START_REV: false
+  STOP_PB: false
+  MOTOR_FWD: false
+  MOTOR_REV: false
+  RUN_LAMP: false
+
+steps:
+  - at_cycle: 0
+    inputs:
+      ESTOP: true
+      START_FWD: false
+  - at_cycle: 3
+    inputs:
+      START_FWD: true     # 正転起動
+  - at_cycle: 4
+    inputs:
+      START_FWD: false    # 押しボタン離す (自己保持確認)
+  - at_cycle: 10
+    inputs:
+      STOP_PB: true       # 停止
+  - at_cycle: 11
+    inputs:
+      STOP_PB: false
+  - at_cycle: 14
+    inputs:
+      START_REV: true     # 逆転起動
+  - at_cycle: 15
+    inputs:
+      START_REV: false
+  - at_cycle: 22
+    inputs:
+      ESTOP: false        # 非常停止 (B接点開放 → false)
+  - at_cycle: 25
+    inputs:
+      ESTOP: true         # 非常停止解除
+
+watch:
+  - START_FWD
+  - START_REV
+  - STOP_PB
+  - ESTOP
+  - MOTOR_FWD
+  - MOTOR_REV
+  - RUN_LAMP
