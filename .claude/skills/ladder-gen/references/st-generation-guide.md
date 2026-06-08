@@ -65,8 +65,11 @@ END_IF;
 - 文末は必ず `;`。ブロックは `IF…END_IF;` `CASE…END_CASE;` で閉じる。
 - ラベルは大文字 + アンダースコア（マスタと一致）。
 - タイマは GX Works3 のタイマ命令/FB に合わせる。中間表現では
-  `IF cond THEN T_DRY(IN:=TRUE, PT:=T#5s); END_IF;` のように PT を構造化仕様の
+  `T_DRY(IN := cond, PT := T#5s);` のようにタイマインスタンスを**条件分岐(IF)の外で
+  毎スキャン無条件に呼び出し**、起動条件を `IN` 入力に与える。PT は構造化仕様の
   `preset_ms` から与える（機種の流儀に合わせて後段調整）。
+  - アンチパターン: `IF cond THEN T_DRY(IN:=TRUE, PT:=T#5s); END_IF;`。
+    `cond` が FALSE のときタイマが更新されず（`IN:=FALSE` が伝わらず）リセットされない。
 - 自己保持は `M_RUNNING := (set OR M_RUNNING) AND NOT reset;` の形を基本とする。
 - コメント `(* … *)` で各ブロックの意図を残す（レビューと保守のため）。
 

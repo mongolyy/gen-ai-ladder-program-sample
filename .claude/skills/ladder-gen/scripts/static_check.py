@@ -90,10 +90,12 @@ def load_spec(path):
 def _fallback_spec(text):
     """pyyaml 無し時の最小フォールバック。estop/outputs/interlocks のみ抽出。"""
     spec = {"io": {"outputs": []}, "safety": {"estop": {}}, "interlocks": []}
-    # estop ラベル
-    m = re.search(r"estop:\s*\n\s*label:\s*(\S+)", text)
-    if m:
-        spec["safety"]["estop"]["label"] = m.group(1).strip().strip('"')
+    # estop ブロック全体を抽出してから label を探す (属性の並び順に依存しない)
+    estop_block = re.search(r"estop:\s*\n((?:\s+.*\n?)+)", text)
+    if estop_block:
+        m = re.search(r"label:\s*(\S+)", estop_block.group(1))
+        if m:
+            spec["safety"]["estop"]["label"] = m.group(1).strip().strip('"')
     # outputs ラベル (outputs: ブロック内の label:)
     out_block = re.search(r"outputs:(.*?)(?:\n\w|\Z)", text, flags=re.DOTALL)
     if out_block:
@@ -120,23 +122,32 @@ def analyze_st(text):
     block_stack = []  # list of [block_id, branch_idx]
     next_block_id = [0]
 
-    tokens = re.findall(r"END_IF|END_CASE|ELSIF|ELSE|IF|CASE|[A-Za-z_][A-Za-z0-9_]*\s*:=|.",
-                        clean)
+    # キーワードは \b で完全一致に限定 (SHIFT/ACTIVE 等の部分一致を防ぐ)。
+    # CASE の分岐検出用に := 以外のコロン :(?!=) もトークン化する。
+    tokens = re.findall(
+        r"\b(?:END_IF|END_CASE|ELSIF|ELSE|IF|CASE)\b|[A-Za-z_][A-Za-z0-9_]*\s*:=|:(?!=)|.",
+        clean)
     for tok in tokens:
         t = tok.strip()
         up = t.upper()
         if up in ("IF", "CASE"):
-            block_stack.append([next_block_id[0], 0])
+            block_stack.append([next_block_id[0], 0, up])  # [id, branch, kind]
             next_block_id[0] += 1
         elif up in ("ELSIF", "ELSE"):
             if block_stack:
+                block_stack[-1][1] += 1
+        elif t == ":":
+            # CASE のケースラベル (例: 1:, 2:) ごとに分岐を進める
+            if block_stack and block_stack[-1][2] == "CASE":
                 block_stack[-1][1] += 1
         elif up in ("END_IF", "END_CASE"):
             if block_stack:
                 block_stack.pop()
         elif t.endswith(":="):
             label = t[:-2].strip()
-            assigns.append((label, [tuple(b) for b in block_stack]))
+            # FB 入力 (IN:=, PT:= 等) は代入先(コイル)ではないので除外
+            if label.upper() not in ST_KEYWORDS:
+                assigns.append((label, [tuple(b[:2]) for b in block_stack]))
 
     # 構文対応
     if_open = len(re.findall(r"\bIF\b", clean))
