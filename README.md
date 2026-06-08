@@ -58,12 +58,27 @@ ERROR が 1 件でもあれば終了コード 1。`--spec` は任意だが安全
     device-master.template.csv      デバイスマスタテンプレート
   scripts/
     static_check.py                 工程⑤ 静的チェッカー
+    gen_state_machine.py            状態遷移 → CASE 状態機械生成
+    ladder_view.py                  ST → ASCII ラダー図ビュー
+    export_gxworks3.py              工程⑦ GX Works3 取り込み用ファイル生成
+  tests/                            スクリプトの pytest テスト
   examples/
     motor-fwd-rev/                  モータ正逆運転制御の完成例
+    conveyor-seq/                   状態遷移（シーケンス制御）の例
+```
+
+## テスト
+
+スクリプトの回帰テストは `pytest` で実行する（CI でも自動実行）:
+
+```bash
+pip install pytest pyyaml
+pytest
 ```
 
 ## 現状と今後
 
-実装済み: 工程②〜⑤（構造化〜静的チェック）と人間レビュー観点の提示（⑥）。
-今後の候補: GX Works3 連携の自動化（⑦）、シミュレーション結果の取り込み（⑧）、
-状態遷移（CASE）からのラダー図ビュー生成。
+実装済み: 工程②〜⑦（構造化〜静的チェック〜GX Works3 連携）、人間レビュー観点（⑥）、
+状態遷移→CASE 状態機械生成、ST→ラダー図ビュー。
+今後の候補: シミュレーション結果の取り込み（⑧）、状態機械の出力動作（Moore）自動生成、
+静的チェックの強化（スキャン依存・タイマ未呼び出し検出）。
