@@ -1,0 +1,47 @@
+# 構造化仕様テンプレート（工程②）
+# references/structured-spec-schema.md を参照して埋める。
+# 不明点・AI が補完した項目は assumptions に必ず記録する。
+
+meta:
+  name: ""              # 案件名
+  version: "0.1.0"
+  plc: ""              # 対象機種 例: MELSEC iQ-R / iQ-F
+  author: gen-ai-ladder
+
+io:
+  inputs:
+    - label: START_PB
+      type: BOOL
+      description: 起動押しボタン
+      device: ""        # 物理アドレスは工程③で確定
+      active: high
+  outputs:
+    - label: RUN_LAMP
+      type: BOOL
+      description: 運転ランプ
+      device: ""
+
+internal:
+  relays: []           # - { label: M_RUNNING, description: 運転中フラグ }
+  timers: []           # - { label: T_DRY, preset_ms: 5000, description: 乾燥タイマ }
+  counters: []         # - { label: C_PRODUCT, preset: 100, description: 製品カウンタ }
+  data: []             # - { label: D_SPEED, type: INT, description: 設定速度 }
+
+states: []             # - { id: IDLE, description: 待機 }
+
+transitions: []        # - { from: IDLE, to: RUNNING, condition: "START_PB AND NOT ESTOP" }
+
+interlocks: []         # - { name: 正逆同時禁止, forbid: "MOTOR_FWD AND MOTOR_REV" }
+
+safety:
+  estop:
+    label: ESTOP
+    active: low         # B接点（断線時に安全側）
+    on_trip: 全出力OFF
+  reset:
+    label: RESET_PB
+    description: 復帰操作
+
+logic: []              # 上記で表せない補足ロジック（自由記述）
+
+assumptions: []        # - "AI が補完: 非常停止 ESTOP(B接点) を追加。仕様に明示なし。"
