@@ -23,6 +23,10 @@ on:
         required: false
         default: ''
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   check-examples:
     name: サンプル — 静的チェック & シミュレーション
@@ -37,6 +41,9 @@ jobs:
 
       - name: 依存パッケージのインストール
         run: pip install pyyaml matplotlib
+
+      - name: 出力ディレクトリの作成
+        run: mkdir -p out-ci/motor-fwd-rev out-ci/conveyor-seq
 
       # ---- motor-fwd-rev ----
       - name: '[motor-fwd-rev] 静的チェック'
@@ -121,6 +128,7 @@ jobs:
       # ---- PRコメントにサマリを貼る ----
       - name: PR コメントにサマリを投稿
         if: github.event_name == 'pull_request' && always()
+        continue-on-error: true
         uses: actions/github-script@v7
         with:
           script: |
