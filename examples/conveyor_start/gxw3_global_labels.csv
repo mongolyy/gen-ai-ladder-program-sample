@@ -1,0 +1,8 @@
+﻿ラベル名,データ型,クラス,割付(デバイス/ラベル),コメント
+START_PB,ビット,VAR_GLOBAL,X0,起動押しボタン(A接点)
+STOP_PB,ビット,VAR_GLOBAL,X1,停止押しボタン(A接点)
+ESTOP,ビット,VAR_GLOBAL,X2,非常停止(B接点 通常ON)
+WORK_SENS,ビット,VAR_GLOBAL,X3,出口ワーク検出センサ(ワーク有でON)
+CONVEYOR_MOTOR,ビット,VAR_GLOBAL,Y10,コンベアモータ
+RUN_LAMP,ビット,VAR_GLOBAL,Y11,運転ランプ
+M_RUNNING,ビット,VAR_GLOBAL,M0,運転中フラグ(自己保持)

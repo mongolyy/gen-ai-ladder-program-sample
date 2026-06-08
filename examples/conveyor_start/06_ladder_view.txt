@@ -1,0 +1,17 @@
+=== ラダー図ビュー (ST からの参考変換) ===
+凡例: ] [ a接点  ]/[ b接点  ( ) 出力コイル  | 母線
+
+-- M_RUNNING := (START_PB OR M_RUNNING) AND NOT STOP_PB AND ESTOP
+|  START_PB  STOP_PB  ESTOP M_RUNNING |
+|+---] [----+--]/[-----] [-----( )----|
+||M_RUNNING |                         |
+|+---] [----+                         |
+
+-- CONVEYOR_MOTOR := M_RUNNING AND ESTOP AND NOT WORK_SENS
+|M_RUNNING  ESTOP WORK_SENS  CONVEYOR_MOTOR|
+|---] [------] [-----]/[----------( )------|
+
+-- RUN_LAMP := M_RUNNING
+|M_RUNNING  RUN_LAMP|
+|---] [-------( )---|
+

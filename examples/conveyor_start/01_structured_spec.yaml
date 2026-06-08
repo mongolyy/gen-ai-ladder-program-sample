@@ -1,0 +1,85 @@
+meta:
+  name: conveyor_start
+  version: "0.1.0"
+  plc: MELSEC iQ-R
+  author: gen-ai-ladder
+
+# 1本のベルトコンベアを押しボタンで起動/停止する。
+# 安全のため非常停止とワーク詰まり（出口センサ）検出を備える。
+# 実装方式: 自己保持（運転フラグ M_RUNNING を SET/RST 相当で保持）。状態遷移なし。
+
+io:
+  inputs:
+    - label: START_PB
+      type: BOOL
+      description: 起動押しボタン
+      device: ""
+      active: high          # A接点（押すとON）
+    - label: STOP_PB
+      type: BOOL
+      description: 停止押しボタン
+      device: ""
+      active: high          # A接点（押すとON。停止指令）
+    - label: ESTOP
+      type: BOOL
+      description: 非常停止ボタン
+      device: ""
+      active: low           # B接点（通常ON、押すとOFF＝断線時も安全側）
+    - label: WORK_SENS
+      type: BOOL
+      description: コンベア出口のワーク検出センサ
+      device: ""
+      active: high          # ワーク有でON
+  outputs:
+    - label: CONVEYOR_MOTOR
+      type: BOOL
+      description: コンベアモータ出力
+      device: ""
+    - label: RUN_LAMP
+      type: BOOL
+      description: 運転ランプ
+      device: ""
+
+internal:
+  relays:
+    - label: M_RUNNING
+      description: 運転中フラグ（自己保持）。起動でON、停止/非常停止でOFF
+  timers: []
+  counters: []
+  data: []
+
+# 自己保持方式のため states/transitions は使わない
+states: []
+transitions: []
+
+interlocks:
+  - name: 非常停止中はモータ駆動禁止
+    when: NOT ESTOP_OK          # ESTOP_OK = ESTOP（B接点なので通常ON＝健全）
+    forbid: CONVEYOR_MOTOR
+  - name: ワーク検出中はモータ一時停止
+    when: WORK_SENS
+    forbid: CONVEYOR_MOTOR
+
+safety:
+  estop:
+    label: ESTOP
+    active: low               # B接点（断線時に安全側）
+    on_trip: 全出力OFF＋運転フラグM_RUNNINGをOFF（運転解除）
+  reset:
+    label: START_PB
+    description: 非常停止解除後は自動復帰せず、再度START_PBを押すまで運転再開しない
+
+logic:
+  - 運転フラグ: START_PB AND (NOT STOP_PB) AND ESTOP健全 で M_RUNNING を SET。
+  - 運転解除:   STOP_PB OR 非常停止 で M_RUNNING を RST。
+  - モータ出力:  CONVEYOR_MOTOR = M_RUNNING AND ESTOP健全 AND (NOT WORK_SENS)。
+                 ワーク検出中は運転フラグは保持したままモータのみ停止（一時停止）。
+                 ワークが除かれれば自動でモータ再駆動。
+  - 運転ランプ:  RUN_LAMP = M_RUNNING（一時停止中も運転状態を示すため点灯維持）。
+
+assumptions:
+  - "AI が補完: 非常停止 ESTOP を B接点(active=low)として追加。断線時に安全側へ倒す前提。"
+  - "AI が補完: STOP_PB は A接点(押すとON=停止指令)と解釈。実機がB接点配線の場合は論理を要反転。"
+  - "AI が補完: 非常停止解除後は自己保持がOFFのままなので、再START_PBまで再開しない（自動復帰なし）。"
+  - "AI が補完: 電源投入時 M_RUNNING=OFF（停止状態）から開始すると仮定。"
+  - "AI が補完: ワーク検出時はランプ点灯を維持（運転継続中の一時停止という扱い）。停止表示が望ましければ要変更。"
