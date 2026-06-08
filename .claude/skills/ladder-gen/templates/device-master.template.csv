@@ -1,0 +1,4 @@
+label,device,type,io,comment
+START_PB,X0,BOOL,input,起動押しボタン
+ESTOP,X1,BOOL,input,非常停止(B接点)
+RUN_LAMP,Y0,BOOL,output,運転ランプ

@@ -1,0 +1,8 @@
+label,device,type,io,comment
+START_FWD,X0,BOOL,input,正転起動押しボタン
+START_REV,X1,BOOL,input,逆転起動押しボタン
+STOP_PB,X2,BOOL,input,停止押しボタン
+ESTOP,X3,BOOL,input,非常停止(B接点)
+MOTOR_FWD,Y0,BOOL,output,正転出力(接触器)
+MOTOR_REV,Y1,BOOL,output,逆転出力(接触器)
+RUN_LAMP,Y2,BOOL,output,運転ランプ

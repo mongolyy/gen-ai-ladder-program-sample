@@ -1,0 +1,49 @@
+# 例: モータ正逆運転制御 (工程② 構造化仕様)
+# 自然言語仕様:
+#   「正転ボタンで正転、逆転ボタンで逆転。停止ボタンで停止。
+#    正転と逆転は同時にONしない。非常停止で全停止。運転中はランプ点灯。」
+meta:
+  name: motor-fwd-rev
+  version: "0.1.0"
+  plc: MELSEC iQ-F
+  author: gen-ai-ladder
+
+io:
+  inputs:
+    - { label: START_FWD, type: BOOL, description: 正転起動, device: "", active: high }
+    - { label: START_REV, type: BOOL, description: 逆転起動, device: "", active: high }
+    - { label: STOP_PB,   type: BOOL, description: 停止,     device: "", active: high }
+    - { label: ESTOP,     type: BOOL, description: 非常停止, device: "", active: low }
+  outputs:
+    - { label: MOTOR_FWD, type: BOOL, description: 正転出力, device: "" }
+    - { label: MOTOR_REV, type: BOOL, description: 逆転出力, device: "" }
+    - { label: RUN_LAMP,  type: BOOL, description: 運転ランプ, device: "" }
+
+internal:
+  relays: []
+  timers: []
+  counters: []
+  data: []
+
+states: []
+transitions: []
+
+interlocks:
+  - name: 正逆同時禁止
+    forbid: "MOTOR_FWD AND MOTOR_REV"
+
+safety:
+  estop:
+    label: ESTOP
+    active: low
+    on_trip: 全出力OFF
+  reset:
+    label: STOP_PB
+    description: 停止で復帰
+
+logic:
+  - 正転/逆転は自己保持。STOP_PB または ESTOP断 で解除。
+
+assumptions:
+  - "AI が補完: ESTOP を B接点(active: low)として扱い、NOT ESTOP で運転許可とした。"
+  - "AI が補完: 起動は瞬時押し→自己保持と仮定。"
