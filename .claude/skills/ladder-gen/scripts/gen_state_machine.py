@@ -17,14 +17,30 @@ import sys
 
 
 def load_spec(path):
-    with open(path, encoding="utf-8") as f:
-        text = f.read()
+    try:
+        with open(path, encoding="utf-8-sig") as f:
+            text = f.read()
+    except FileNotFoundError:
+        sys.exit(f"ERROR: 仕様ファイルが見つかりません: {path}")
+    except OSError as e:
+        sys.exit(f"ERROR: 仕様ファイルの読み込みに失敗しました: {e}")
+
     try:
         import yaml
     except ImportError:
         sys.exit("ERROR: pyyaml が必要です (pip install pyyaml)。"
                  "状態機械生成は構造化された states/transitions の解釈に YAML を使います。")
-    return yaml.safe_load(text)
+
+    try:
+        spec = yaml.safe_load(text)
+    except yaml.YAMLError as e:
+        sys.exit(f"ERROR: YAML のパースに失敗しました: {e}")
+
+    if spec is None:
+        sys.exit("ERROR: 仕様ファイルが空です。")
+    if not isinstance(spec, dict):
+        sys.exit("ERROR: 仕様ファイルが正しい YAML 形式（辞書型）ではありません。")
+    return spec
 
 
 def build_state_machine(spec, state_var):
@@ -35,16 +51,23 @@ def build_state_machine(spec, state_var):
         sys.exit("ERROR: spec に states がありません。状態機械を生成できません。")
 
     # 状態 id → 番号
-    enc = {s["id"]: i for i, s in enumerate(states)}
+    enc = {}
+    for i, s in enumerate(states):
+        if not isinstance(s, dict) or "id" not in s:
+            sys.exit(f"ERROR: states の要素が不正です (辞書型かつ 'id' キーが必要): {s}")
+        enc[s["id"]] = i
 
     # 遷移を from 状態ごとにまとめる
     by_from = {}
     for t in transitions:
+        if not isinstance(t, dict):
+            sys.exit(f"ERROR: transition の要素が辞書型ではありません: {t}")
         frm = t.get("from")
+        to = t.get("to")
         if frm not in enc:
             sys.exit(f"ERROR: transition の from '{frm}' が states に存在しません。")
-        if t.get("to") not in enc:
-            sys.exit(f"ERROR: transition の to '{t.get('to')}' が states に存在しません。")
+        if to not in enc:
+            sys.exit(f"ERROR: transition の to '{to}' が states に存在しません。")
         by_from.setdefault(frm, []).append(t)
 
     out = []
@@ -91,8 +114,11 @@ def main():
     st = build_state_machine(spec, args.state_var)
 
     if args.out:
-        with open(args.out, "w", encoding="utf-8") as f:
-            f.write(st + "\n")
+        try:
+            with open(args.out, "w", encoding="utf-8") as f:
+                f.write(st + "\n")
+        except OSError as e:
+            sys.exit(f"ERROR: 出力ファイルの書き込みに失敗しました: {e}")
         print(f"[OK] 状態機械 ST を出力: {args.out}")
     else:
         print(st)

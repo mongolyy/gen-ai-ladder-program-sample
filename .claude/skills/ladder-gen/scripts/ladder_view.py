@@ -210,8 +210,13 @@ def main():
     ap.add_argument("--out", help="出力先 (省略時は標準出力)")
     args = ap.parse_args()
 
-    with open(args.st, encoding="utf-8") as f:
-        text = f.read()
+    try:
+        with open(args.st, encoding="utf-8") as f:
+            text = f.read()
+    except FileNotFoundError:
+        raise SystemExit(f"ERROR: ST ファイルが見つかりません: {args.st}")
+    except OSError as e:
+        raise SystemExit(f"ERROR: ST ファイルの読み込みに失敗しました: {e}")
 
     out_lines = ["=== ラダー図ビュー (ST からの参考変換) ===",
                  "凡例: ] [ a接点  ]/[ b接点  ( ) 出力コイル  | 母線", ""]
@@ -227,8 +232,11 @@ def main():
     report = "\n".join(out_lines)
     print(report)
     if args.out:
-        with open(args.out, "w", encoding="utf-8") as f:
-            f.write(report + "\n")
+        try:
+            with open(args.out, "w", encoding="utf-8") as f:
+                f.write(report + "\n")
+        except OSError as e:
+            raise SystemExit(f"ERROR: 出力ファイルの書き込みに失敗しました: {e}")
 
 
 if __name__ == "__main__":
