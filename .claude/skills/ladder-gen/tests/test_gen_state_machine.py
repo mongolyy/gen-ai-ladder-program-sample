@@ -22,13 +22,15 @@ def test_build_state_machine_basic():
 
 
 def test_no_states_exits():
-    with pytest.raises(SystemExit):
+    with pytest.raises(SystemExit) as exc:
         gsm.build_state_machine({"states": []}, "STATE")
+    assert exc.value.code != 0
 
 
 def test_invalid_state_element_exits():
-    with pytest.raises(SystemExit):
+    with pytest.raises(SystemExit) as exc:
         gsm.build_state_machine({"states": ["IDLE"]}, "STATE")
+    assert exc.value.code != 0
 
 
 def test_unknown_transition_from_exits():
@@ -36,8 +38,9 @@ def test_unknown_transition_from_exits():
         "states": [{"id": "IDLE"}],
         "transitions": [{"from": "NOPE", "to": "IDLE"}],
     }
-    with pytest.raises(SystemExit):
+    with pytest.raises(SystemExit) as exc:
         gsm.build_state_machine(spec, "STATE")
+    assert exc.value.code != 0
 
 
 def test_unknown_transition_to_exits():
@@ -45,10 +48,12 @@ def test_unknown_transition_to_exits():
         "states": [{"id": "IDLE"}],
         "transitions": [{"from": "IDLE", "to": "NOPE"}],
     }
-    with pytest.raises(SystemExit):
+    with pytest.raises(SystemExit) as exc:
         gsm.build_state_machine(spec, "STATE")
+    assert exc.value.code != 0
 
 
 def test_load_spec_missing_file_exits():
-    with pytest.raises(SystemExit):
+    with pytest.raises(SystemExit) as exc:
         gsm.load_spec("/nonexistent/spec.yaml")
+    assert exc.value.code != 0
