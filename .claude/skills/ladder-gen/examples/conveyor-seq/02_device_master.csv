@@ -1,0 +1,7 @@
+label,device,type,io,comment
+START_PB,X0,BOOL,input,起動押しボタン
+STOP_PB,X1,BOOL,input,停止押しボタン
+ESTOP,X2,BOOL,input,非常停止(B接点)
+CONVEYOR,Y0,BOOL,output,搬送モータ
+RUN_LAMP,Y1,BOOL,output,運転ランプ
+STATE,D0,INT,internal,状態変数

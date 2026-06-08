@@ -78,6 +78,19 @@ out/<案件名>/
    - 非常停止・インターロックを最上位条件として組み込む。
 3. `out/<案件名>/03_program.st` に書き出す。
 
+**状態遷移がある場合（シーケンス制御）**: `references/views.md` を読み、構造化仕様の
+`states` / `transitions` から CASE 状態機械の骨格を生成できる:
+
+```bash
+python3 .claude/skills/ladder-gen/scripts/gen_state_machine.py \
+  --spec out/<案件名>/01_structured_spec.yaml \
+  --state-var STATE \
+  --out out/<案件名>/03_state_machine.st
+```
+
+生成した骨格に各状態の出力動作（TODO）を埋め、`03_program.st` に統合する。
+**状態変数（既定 `STATE`, INT）をデバイスマスタへ追加すること**（未追加だと C002）。
+
 ### 工程⑤ 静的チェック
 
 1. `scripts/static_check.py` を実行する:
@@ -97,6 +110,17 @@ out/<案件名>/
 静的チェックを通過したら、人間レビュー用に `out/<案件名>/05_review_notes.md` を生成する。
 `references/static-check-rules.md` のレビュー観点（安全・スキャン依存・自己保持の妥当性等）
 に沿って、レビュアーが確認すべきポイントと、AI が置いた前提（assumptions）を列挙する。
+
+**ラダー図ビュー（任意・レビュー補助）**: ST が直感的に追いにくい場合、`references/views.md`
+に従い ST のブール代入文を ASCII ラダー図へ変換してレビューを助ける:
+
+```bash
+python3 .claude/skills/ladder-gen/scripts/ladder_view.py \
+  --st out/<案件名>/03_program.st \
+  --out out/<案件名>/06_ladder_view.txt
+```
+
+ラダー図は参考ビューであり、GX Works3 へ取り込むのは ST（工程⑦）である。
 
 ### 工程⑦ GX Works3 連携
 
