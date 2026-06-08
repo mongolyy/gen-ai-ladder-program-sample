@@ -98,11 +98,26 @@ out/<案件名>/
 `references/static-check-rules.md` のレビュー観点（安全・スキャン依存・自己保持の妥当性等）
 に沿って、レビュアーが確認すべきポイントと、AI が置いた前提（assumptions）を列挙する。
 
-### 工程⑦ GX Works3 への橋渡し
+### 工程⑦ GX Works3 連携
 
-`out/<案件名>/03_program.st` は GX Works3 の ST エディタへインポート/貼り付けする前提の
-プレーンな構造化テキスト。GX Works3 側の自動インポート可否はプロジェクト環境に依存するため、
-ユーザーに連携方法（CSV/プロジェクト連携/手動貼り付け）を確認する。
+`references/gxworks3-export.md` を読み、取り込み用ファイルを生成する:
+
+```bash
+python3 .claude/skills/ladder-gen/scripts/export_gxworks3.py \
+  --devices out/<案件名>/02_device_master.csv \
+  --st      out/<案件名>/03_program.st \
+  --labels  out/<案件名>/gxw3_global_labels.csv \
+  --comments out/<案件名>/gxw3_device_comments.csv \
+  --out-st  out/<案件名>/gxw3_program.st
+```
+
+- `gxw3_global_labels.csv` … グローバルラベルを CSV 一括取り込み
+- `gxw3_device_comments.csv` … デバイスコメントを CSV 取り込み
+- `gxw3_program.st` … ST POU へ貼り付け
+
+GX Works3 のラベル CSV はバージョン/言語で列が異なるため、取り込みエラー時は
+実機からエクスポートしたテンプレートに列を合わせる（`gxworks3-export.md` 参照）。
+**割付未確定（device 空）のラベルが残っていれば工程③へ戻す。**
 
 ## 重要な原則
 
