@@ -39,12 +39,15 @@ LABEL_HEADER = ["ラベル名", "データ型", "クラス", "割付(デバイ�
 
 def load_devices(path):
     rows = []
-    with open(path, newline="", encoding="utf-8") as f:
+    # utf-8-sig: Excel 等が付与する BOM を除去 (BOM が残ると先頭列名が壊れ全行スキップになる)
+    with open(path, newline="", encoding="utf-8-sig") as f:
         for row in csv.DictReader(f):
-            label = (row.get("label") or "").strip()
-            if not label:
+            # ヘッダより多い列は DictReader が key=None / value=list を返すため除外・ガード
+            clean = {k: v.strip() if isinstance(v, str) else ""
+                     for k, v in row.items() if k is not None}
+            if not clean.get("label"):
                 continue
-            rows.append({k: (v or "").strip() for k, v in row.items()})
+            rows.append(clean)
     return rows
 
 
@@ -69,14 +72,18 @@ def write_global_labels(devices, path):
 
 def write_device_comments(devices, path):
     n = 0
+    seen = set()
     with open(path, "w", newline="", encoding="utf-8-sig") as f:
         w = csv.writer(f)
         w.writerow(["デバイス", "コメント"])
         for d in devices:
             dev = d.get("device", "")
-            if not dev:
+            comment = d.get("comment", "")
+            # 空コメントは既存コメントの上書き事故を避けて出力しない。デバイス重複も排除。
+            if not dev or not comment or dev in seen:
                 continue
-            w.writerow([dev, d.get("comment", "")])
+            seen.add(dev)
+            w.writerow([dev, comment])
             n += 1
     return n
 
