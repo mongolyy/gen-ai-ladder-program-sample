@@ -1,0 +1,27 @@
+=== ラダー図ビュー (ST からの参考変換) ===
+凡例: ] [ a接点  ]/[ b接点  ( ) 出力コイル  | 母線
+
+-- MOTOR_FWD := (START_FWD OR MOTOR_FWD)
+             AND NOT STOP_PB
+             AND ESTOP
+             AND NOT MOTOR_REV
+| START_FWD  STOP_PB  ESTOP MOTOR_REV MOTOR_FWD |
+|+---] [----+--]/[-----] [-----]/[-------( )----|
+||MOTOR_FWD |                                   |
+|+---] [----+                                   |
+
+-- MOTOR_REV := (START_REV OR MOTOR_REV)
+             AND NOT STOP_PB
+             AND ESTOP
+             AND NOT MOTOR_FWD
+| START_REV  STOP_PB  ESTOP MOTOR_FWD MOTOR_REV |
+|+---] [----+--]/[-----] [-----]/[-------( )----|
+||MOTOR_REV |                                   |
+|+---] [----+                                   |
+
+-- RUN_LAMP := MOTOR_FWD OR MOTOR_REV
+| MOTOR_FWD   RUN_LAMP|
+|+---] [----+---( )---|
+||MOTOR_REV |         |
+|+---] [----+         |
+

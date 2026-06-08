@@ -1,0 +1,52 @@
+# 例: コンベア起動シーケンス (状態遷移のデモ)
+# 自然言語仕様:
+#   「起動ボタンで搬送開始。停止ボタンまたは非常停止で停止処理へ。
+#    停止処理が終わったら待機へ戻る。非常停止(B接点)で全停止。」
+meta:
+  name: conveyor-seq
+  version: "0.1.0"
+  plc: MELSEC iQ-F
+  author: gen-ai-ladder
+
+io:
+  inputs:
+    - { label: START_PB, type: BOOL, description: 起動,     device: "", active: high }
+    - { label: STOP_PB,  type: BOOL, description: 停止,     device: "", active: high }
+    - { label: ESTOP,    type: BOOL, description: 非常停止, device: "", active: low }
+  outputs:
+    - { label: CONVEYOR, type: BOOL, description: 搬送モータ, device: "" }
+    - { label: RUN_LAMP, type: BOOL, description: 運転ランプ, device: "" }
+
+internal:
+  relays: []
+  timers: []
+  counters: []
+  data:
+    - { label: STATE, type: INT, description: 状態変数 }
+
+states:
+  - { id: IDLE,     description: 待機 }
+  - { id: RUNNING,  description: 搬送中 }
+  - { id: STOPPING, description: 停止処理 }
+
+transitions:
+  - { from: IDLE,     to: RUNNING,  condition: "START_PB AND ESTOP" }
+  - { from: RUNNING,  to: STOPPING, condition: "STOP_PB OR NOT ESTOP" }
+  - { from: STOPPING, to: IDLE,     condition: "NOT CONVEYOR" }
+
+interlocks:
+  - name: 非常停止時は搬送停止
+    when: NOT ESTOP
+    forbid: CONVEYOR
+
+safety:
+  estop:
+    label: ESTOP
+    active: low
+    on_trip: 全出力OFF
+  reset:
+    label: STOP_PB
+    description: 停止で復帰
+
+assumptions:
+  - "AI が補完: 状態変数 STATE(INT) を追加。停電保持は不要と仮定。"
