@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install pytest pyyaml
+
+      - name: Run tests
+        run: pytest .claude/skills/ladder-gen/tests -v
+
+      - name: Smoke test ladder-gen scripts on example
+        working-directory: .claude/skills/ladder-gen
+        run: |
+          python3 scripts/static_check.py \
+            --st examples/motor-fwd-rev/03_program.st \
+            --devices examples/motor-fwd-rev/02_device_master.csv \
+            --spec examples/motor-fwd-rev/01_structured_spec.yaml
+          python3 scripts/gen_state_machine.py \
+            --spec examples/conveyor-seq/01_structured_spec.yaml >/dev/null
+          python3 scripts/ladder_view.py \
+            --st examples/motor-fwd-rev/03_program.st >/dev/null
+          python3 scripts/export_gxworks3.py \
+            --devices examples/motor-fwd-rev/02_device_master.csv \
+            --labels /tmp/labels.csv >/dev/null
