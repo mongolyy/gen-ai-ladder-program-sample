@@ -1,0 +1,8 @@
+﻿ラベル名,データ型,クラス,割付(デバイス/ラベル),コメント
+START_FWD,ビット,VAR_GLOBAL,X0,正転起動押しボタン
+START_REV,ビット,VAR_GLOBAL,X1,逆転起動押しボタン
+STOP_PB,ビット,VAR_GLOBAL,X2,停止押しボタン
+ESTOP,ビット,VAR_GLOBAL,X3,非常停止(B接点)
+MOTOR_FWD,ビット,VAR_GLOBAL,Y0,正転出力(接触器)
+MOTOR_REV,ビット,VAR_GLOBAL,Y1,逆転出力(接触器)
+RUN_LAMP,ビット,VAR_GLOBAL,Y2,運転ランプ

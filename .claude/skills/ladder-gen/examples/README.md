@@ -14,6 +14,9 @@
 | `02_device_master.csv` | ③ | デバイス/ラベル割付表 |
 | `03_program.st` | ④ | 生成された ST ソース |
 | `04_static_check.txt` | ⑤ | 静的チェック結果（ERROR 0） |
+| `gxw3_global_labels.csv` | ⑦ | GX Works3 取り込み用グローバルラベル CSV |
+| `gxw3_device_comments.csv` | ⑦ | GX Works3 取り込み用デバイスコメント CSV |
+| `gxw3_program.st` | ⑦ | GX Works3 取り込み用 ST |
 
 ### 静的チェックを再実行する
 
