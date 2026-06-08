@@ -54,7 +54,7 @@ transitions: []
 
 interlocks:
   - name: 非常停止中はモータ駆動禁止
-    when: NOT ESTOP_OK          # ESTOP_OK = ESTOP（B接点なので通常ON＝健全）
+    when: NOT ESTOP             # ESTOP（B接点なので通常ON＝健全）。非常停止中=NOT ESTOP
     forbid: CONVEYOR_MOTOR
   - name: ワーク検出中はモータ一時停止
     when: WORK_SENS
