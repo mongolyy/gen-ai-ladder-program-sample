@@ -1,0 +1,81 @@
+meta:
+  name: fan_timer
+  version: "0.1.0"
+  plc: MELSEC iQ-R
+  author: gen-ai-ladder
+
+# 換気ファンを押しボタンで起動し、一定時間（30分）後に自動停止する制御。
+# 手動停止も可能。非常停止（B接点）付き。
+# 実装方式: 自己保持 + TON タイマーによる自動停止。状態遷移なし。
+
+io:
+  inputs:
+    - label: RUN_PB
+      type: BOOL
+      description: 起動押しボタン
+      device: ""
+      active: high          # A接点（押すとON）
+    - label: STOP_PB
+      type: BOOL
+      description: 停止押しボタン
+      device: ""
+      active: high          # A接点（押すとON。停止指令）
+    - label: ESTOP
+      type: BOOL
+      description: 非常停止ボタン
+      device: ""
+      active: low           # B接点（通常ON、押すとOFF＝断線時も安全側）
+  outputs:
+    - label: FAN_MOTOR
+      type: BOOL
+      description: 換気ファン出力
+      device: ""
+    - label: RUN_LAMP
+      type: BOOL
+      description: 運転ランプ
+      device: ""
+
+internal:
+  relays:
+    - label: M_RUNNING
+      description: 運転中フラグ（自己保持）。起動でON、停止/非常停止/タイマー満了でOFF
+  timers:
+    - label: T_AUTO_STOP
+      type: TON
+      pt: T#30m
+      description: 自動停止タイマー。M_RUNNING ON から30分後に Q=TRUE → M_RUNNING をリセット
+  counters: []
+  data: []
+
+# 自己保持方式のため states/transitions は使わない
+states: []
+transitions: []
+
+interlocks:
+  - name: 非常停止中はファン駆動禁止
+    when: NOT ESTOP             # ESTOP（B接点）が押される/断線=FALSE → ファン停止
+    forbid: FAN_MOTOR
+
+safety:
+  estop:
+    label: ESTOP
+    active: low               # B接点（断線時に安全側）
+    on_trip: 全出力OFF＋運転フラグM_RUNNINGをOFF（運転解除）
+  reset:
+    label: RUN_PB
+    description: 非常停止解除後は自動復帰せず、再度RUN_PBを押すまで運転再開しない
+
+logic:
+  - 運転フラグ: RUN_PB AND (NOT STOP_PB) AND ESTOP健全 AND タイマー未満了 で M_RUNNING を SET。
+  - 運転解除:   STOP_PB OR 非常停止 OR タイマー満了(T_AUTO_STOP.Q=TRUE) で M_RUNNING を RST。
+  - タイマー:   T_AUTO_STOP は M_RUNNING が ON の間のみ計時。OFF で自動リセット。30分でQ=TRUE。
+  - ファン出力:  FAN_MOTOR = M_RUNNING AND ESTOP健全。
+  - 運転ランプ:  RUN_LAMP = M_RUNNING。
+
+assumptions:
+  - "AI が補完: 非常停止 ESTOP を B接点(active=low)として追加。断線時に安全側へ倒す前提。"
+  - "AI が補完: STOP_PB は A接点(押すとON=停止指令)と解釈。実機がB接点配線の場合は論理を要反転。"
+  - "AI が補完: 非常停止解除後は自己保持がOFFのままなので、再RUN_PBまで再開しない（自動復帰なし）。"
+  - "AI が補完: 電源投入時 M_RUNNING=OFF（停止状態）から開始すると仮定。"
+  - "AI が補完: タイマー満了後は M_RUNNING=FALSE。再度 RUN_PB を押すと30分タイマーが再計時される。"
+  - "AI が補完: PT=T#30m（30分）は仮定値。実際の換気要件に合わせて変更すること。"
