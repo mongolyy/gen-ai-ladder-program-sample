@@ -167,7 +167,10 @@ class _Parser:
             self._skip_until_kw("END_VAR")
             return None
         if k in ("PROGRAM", "FUNCTION", "FUNCTION_BLOCK"):
-            return None  # handled at top level
+            self.consume()
+            if self.peek()[0] == "WORD":
+                self.consume()
+            return None
         if k in ("END_PROGRAM", "END_FUNCTION", "END_FUNCTION_BLOCK"):
             self.consume()
             return None
@@ -335,6 +338,7 @@ _OP_MAP = [
     (re.compile(r"\bTRUE\b",  re.I), " True "),
     (re.compile(r"\bFALSE\b", re.I), " False "),
     (re.compile(r"\bXOR\b", re.I), " ^ "),
+    (re.compile(r"\bMOD\b", re.I), " % "),
     (re.compile(r"<>"),  " != "),
     (re.compile(r"(?<![<>!])=(?!=)"), " == "),
 ]
@@ -358,7 +362,8 @@ def eval_expr(expr_str, env):
     try:
         result = eval(py_expr, {"__builtins__": _SAFE_BUILTINS}, env)  # noqa: S307
         return result
-    except Exception:
+    except Exception as e:
+        print(f"[ERROR] eval失敗 '{expr_str}' (変換後: '{py_expr}'): {e}", file=sys.stderr)
         return False
 
 
@@ -419,7 +424,7 @@ def _exec_stmt(stmt, env, timers):
 
 
 def _exec_fb(stmt, env, timers):
-    """Minimal TON/TOF/TP simulation."""
+    """TON/TOF/TP simulation with PT parsing (100ms scan cycle assumed)."""
     name = stmt["name"]
     args = stmt["args"]
     if name not in timers:
@@ -427,14 +432,55 @@ def _exec_fb(stmt, env, timers):
     tmr = timers[name]
 
     in_val = bool(eval_expr(args.get("IN", "FALSE"), env))
-    tmr.in_val = in_val
 
-    if in_val:
-        tmr.elapsed = min(tmr.elapsed + 1, tmr.preset + 1)
+    # Parse PT if present (e.g. T#5s → 50 cycles, T#500ms → 5 cycles)
+    pt_str = args.get("PT")
+    if pt_str:
+        digits = re.findall(r"\d+", pt_str)
+        if digits:
+            val = int(digits[0])
+            pt_lower = pt_str.lower()
+            if "ms" in pt_lower:
+                tmr.preset = max(1, val // 100)
+            elif "s" in pt_lower:
+                tmr.preset = val * 10
+            else:
+                tmr.preset = val
+
+    # Detect timer type from instance name (e.g. TMR_TOF1 → TOF)
+    name_upper = name.upper()
+    if "TOF" in name_upper:
+        fb_type = "TOF"
+    elif "TP" in name_upper:
+        fb_type = "TP"
     else:
-        tmr.elapsed = 0
+        fb_type = "TON"
 
-    tmr.q = tmr.elapsed >= tmr.preset
+    if fb_type == "TON":
+        if in_val:
+            tmr.elapsed = min(tmr.elapsed + 1, tmr.preset)
+        else:
+            tmr.elapsed = 0
+        tmr.q = tmr.elapsed >= tmr.preset
+    elif fb_type == "TOF":
+        if in_val:
+            tmr.elapsed = 0
+            tmr.q = True
+        else:
+            if tmr.q:
+                tmr.elapsed = min(tmr.elapsed + 1, tmr.preset)
+                if tmr.elapsed >= tmr.preset:
+                    tmr.q = False
+    elif fb_type == "TP":
+        if in_val and not tmr.in_val and not tmr.q:
+            tmr.q = True
+            tmr.elapsed = 0
+        if tmr.q:
+            tmr.elapsed = min(tmr.elapsed + 1, tmr.preset)
+            if tmr.elapsed >= tmr.preset:
+                tmr.q = False
+
+    tmr.in_val = in_val
     tmr.et = tmr.elapsed
 
     env[f"{name}_Q"] = tmr.q
@@ -469,6 +515,28 @@ def load_scenario(path):
 # Simulator
 # ============================================================
 
+def _get_assigned_vars(stmts):
+    """AST を再帰的に探索し、代入先のラベルをすべて返す。"""
+    vars_set = set()
+    for stmt in stmts:
+        t = stmt["type"]
+        if t == "assign":
+            vars_set.add(stmt["lhs"])
+        elif t == "fb_call":
+            name = stmt["name"]
+            vars_set.add(f"{name}_Q")
+            vars_set.add(f"{name}_ET")
+        elif t == "if":
+            for _, then_stmts in stmt["branches"]:
+                vars_set.update(_get_assigned_vars(then_stmts))
+            vars_set.update(_get_assigned_vars(stmt["else"]))
+        elif t == "case":
+            for branch_stmts in stmt["branches"].values():
+                vars_set.update(_get_assigned_vars(branch_stmts))
+            vars_set.update(_get_assigned_vars(stmt["else"]))
+    return vars_set
+
+
 def run_simulation(ast, devices, scenario, total_cycles):
     # Build initial environment from devices
     env = {}
@@ -479,6 +547,14 @@ def run_simulation(ast, devices, scenario, total_cycles):
             env[label] = 0
         else:
             env[label] = False
+
+    # Pre-initialize all variables assigned in AST or watched in scenario
+    for var in _get_assigned_vars(ast):
+        if var not in env:
+            env[var] = False
+    for var in (scenario.get("watch") or []):
+        if var not in env:
+            env[var] = False
 
     # Apply scenario initial values
     initial = scenario.get("initial") or {}
