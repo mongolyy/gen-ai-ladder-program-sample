@@ -1,0 +1,12 @@
+label,device,type,io,comment
+LOW_SENS,X0,BOOL,input,低水位センサ(水位低でON)
+HIGH_SENS,X1,BOOL,input,高水位センサ(水位高でON)
+RUN_PB,X2,BOOL,input,手動起動ボタン(A接点)
+STOP_PB,X3,BOOL,input,手動停止ボタン(A接点)
+ESTOP,X4,BOOL,input,非常停止(B接点 通常ON)
+PUMP_FAULT,X5,BOOL,input,ポンプ異常(A接点)
+FAULT_RESET,X6,BOOL,input,異常リセットボタン(A接点)
+PUMP_MOTOR,Y10,BOOL,output,給水ポンプ
+RUN_LAMP,Y11,BOOL,output,運転ランプ
+ALARM_LAMP,Y12,BOOL,output,アラームランプ
+STATE,D0,INT,internal,状態変数(0:IDLE 1:FILLING 2:ALARM)

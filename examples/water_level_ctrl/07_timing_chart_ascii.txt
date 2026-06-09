@@ -1,0 +1,44 @@
+=== タイミングチャート（ASCII）water_level_ctrl ===
+凡例: ‾ = HIGH/ON   _ = LOW/OFF
+
+シナリオ:
+  Scene1 (cyc  5): LOW_SENS→ON (水位低下→自動起動)  … cyc 12: LOW_SENS→OFF (水位上昇中)
+                   cyc 18: HIGH_SENS→ON → 満水自動停止 (FILLING→IDLE)
+  Scene2 (cyc 25): RUN_PB パルス → 手動起動 (IDLE→FILLING)
+                   cyc 34: STOP_PB→ON → 手動停止 (FILLING→IDLE)
+  Scene3 (cyc 40): LOW_SENS→ON → 自動起動; cyc 48: PUMP_FAULT→ON → 異常停止 (FILLING→ALARM)
+                   cyc 53: PUMP_FAULT→OFF (原因解除); cyc 57: FAULT_RESET→ON → アラーム解除 (ALARM→IDLE)
+                   LOW_SENS が ON のため cyc 58 に自動復帰 (IDLE→FILLING); cyc 65: HIGH_SENS→ON → 満水停止
+  Scene4 (cyc 70): RUN_PB パルス → 手動起動; cyc 76: ESTOP=OFF → 非常停止 (FILLING→IDLE)
+                   cyc 77: ESTOP=ON → IDLE のまま (自動復帰なし); cyc 81: RUN_PB パルス → 手動再起動
+
+           Cycle: 0         1         2         3         4         5         6         7         8
+                  0123456789012345678901234567890123456789012345678901234567890123456789012345678901234
+                  -------------------------------------------------------------------------------------
+LOW_SENS        : _____‾‾‾‾‾‾‾____________________________‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾______________________
+HIGH_SENS       : __________________‾‾_____________________________________________‾___________________
+RUN_PB          : _________________________‾____________________________________________‾__________‾___
+STOP_PB         : __________________________________‾__________________________________________________
+ESTOP           : ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾_‾‾‾‾‾‾‾‾
+PUMP_FAULT      : ________________________________________________‾‾‾‾‾________________________________
+FAULT_RESET     : _________________________________________________________‾___________________________
+PUMP_MOTOR      : _____‾‾‾‾‾‾‾‾‾‾‾‾‾_______‾‾‾‾‾‾‾‾‾______‾‾‾‾‾‾‾‾__________‾‾‾‾‾‾‾_____‾‾‾‾‾‾_____‾‾‾‾
+RUN_LAMP        : _____‾‾‾‾‾‾‾‾‾‾‾‾‾_______‾‾‾‾‾‾‾‾‾______‾‾‾‾‾‾‾‾__________‾‾‾‾‾‾‾_____‾‾‾‾‾‾_____‾‾‾‾
+ALARM_LAMP      : ________________________________________________‾‾‾‾‾‾‾‾‾‾___________________________
+
+主要イベント:
+  Cycle  5: ↑ LOW_SENS=ON → STATE: IDLE(0)→FILLING(1)、ポンプ自動起動 (Scene1)
+  Cycle 12: ↓ LOW_SENS=OFF — STATE=FILLING のまま継続（状態機械のメモリ）
+  Cycle 18: ↑ HIGH_SENS=ON → STATE: FILLING(1)→IDLE(0)、満水自動停止
+  Cycle 25: ↑ RUN_PB パルス → STATE: IDLE(0)→FILLING(1)、手動起動 (Scene2)
+  Cycle 34: ↑ STOP_PB=ON → STATE: FILLING(1)→IDLE(0)、手動停止
+  Cycle 40: ↑ LOW_SENS=ON → STATE: IDLE(0)→FILLING(1)、自動起動 (Scene3)
+  Cycle 48: ↑ PUMP_FAULT=ON → STATE: FILLING(1)→ALARM(2)、異常停止・ALARM_LAMP ON
+  Cycle 53: ↓ PUMP_FAULT=OFF — ALARM ラッチ保持（FAULT_RESET 待ち）
+  Cycle 57: ↑ FAULT_RESET=ON → STATE: ALARM(2)→IDLE(0)、ALARM_LAMP OFF
+  Cycle 58: LOW_SENS=ON のため → STATE: IDLE(0)→FILLING(1)、自動復帰・ポンプ再起動
+  Cycle 65: ↑ HIGH_SENS=ON → STATE: FILLING(1)→IDLE(0)、満水自動停止
+  Cycle 70: ↑ RUN_PB パルス → STATE: IDLE(0)→FILLING(1)、手動起動 (Scene4)
+  Cycle 76: ↓ ESTOP=OFF → STATE: FILLING(1)→IDLE(0)、非常停止
+  Cycle 77: ↑ ESTOP=ON — IDLE のまま (LOW_SENS=OFF・RUN_PB=OFF → 自動復帰しない)
+  Cycle 81: ↑ RUN_PB パルス → STATE: IDLE(0)→FILLING(1)、手動再起動

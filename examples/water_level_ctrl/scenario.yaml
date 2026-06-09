@@ -1,0 +1,112 @@
+meta:
+  name: "water_level_ctrl Operation Verification"
+
+# シミュレーション注意事項:
+#   各サイクルは1PLCスキャンに対応。
+#   CASE 状態機械のため、状態遷移は同スキャン内で完了し、出力は同スキャンで反映される。
+#
+# 確認シナリオ:
+#   Scene 1 (cycle  5): LOW_SENS=ON → 自動給水開始 (STATE: IDLE→FILLING)
+#                       HIGH_SENS=ON (cycle 18) → 自動停止 (STATE: FILLING→IDLE)
+#   Scene 2 (cycle 25): RUN_PB パルス → 手動起動 (STATE: IDLE→FILLING)
+#                       STOP_PB パルス (cycle 34) → 手動停止 (STATE: FILLING→IDLE)
+#   Scene 3 (cycle 40): LOW_SENS=ON → 自動起動; PUMP_FAULT=ON (cycle 48) → 異常停止 (STATE: FILLING→ALARM)
+#                       PUMP_FAULT=OFF (cycle 53); FAULT_RESET パルス (cycle 57) → ALARM→IDLE
+#                       LOW_SENS が ON のため次サイクルで自動復帰 → 給水継続
+#                       HIGH_SENS=ON (cycle 65) → 満水停止
+#   Scene 4 (cycle 70): RUN_PB パルス → 手動起動; ESTOP=OFF (cycle 76) → 非常停止 (STATE: FILLING→IDLE)
+#                       ESTOP=ON (cycle 77) → IDLE のまま（自動復帰なし）
+#                       RUN_PB パルス (cycle 81) → 手動再起動
+
+initial:
+  ESTOP: true       # B接点: 通常 ON (健全)
+
+steps:
+  # --- Scene 1: 自動給水 → 満水自動停止 ---
+  - at_cycle: 5
+    inputs:
+      LOW_SENS: true          # 水位低下 → ポンプ自動起動
+  - at_cycle: 12
+    inputs:
+      LOW_SENS: false         # 水位が低水位センサを通過（ポンプは FILLING 状態で継続）
+  - at_cycle: 18
+    inputs:
+      HIGH_SENS: true         # 満水検出 → ポンプ自動停止
+  - at_cycle: 20
+    inputs:
+      HIGH_SENS: false        # 水位が高水位センサ以下に (LOW_SENS は OFF のまま：IDLE 継続)
+
+  # --- Scene 2: 手動起動 → 手動停止 ---
+  - at_cycle: 25
+    inputs:
+      RUN_PB: true
+  - at_cycle: 26
+    inputs:
+      RUN_PB: false
+  - at_cycle: 34
+    inputs:
+      STOP_PB: true
+  - at_cycle: 35
+    inputs:
+      STOP_PB: false
+
+  # --- Scene 3: 自動起動 → ポンプ異常 → リセット → 自動復帰 → 満水停止 ---
+  - at_cycle: 40
+    inputs:
+      LOW_SENS: true
+  - at_cycle: 48
+    inputs:
+      PUMP_FAULT: true
+  - at_cycle: 53
+    inputs:
+      PUMP_FAULT: false
+  - at_cycle: 57
+    inputs:
+      FAULT_RESET: true
+  - at_cycle: 58
+    inputs:
+      FAULT_RESET: false
+  - at_cycle: 63
+    inputs:
+      LOW_SENS: false
+  - at_cycle: 65
+    inputs:
+      HIGH_SENS: true
+  - at_cycle: 66
+    inputs:
+      HIGH_SENS: false
+
+  # --- Scene 4: 手動起動 → 非常停止 → 解除（自動復帰なし）→ 手動再起動 ---
+  - at_cycle: 70
+    inputs:
+      RUN_PB: true
+  - at_cycle: 71
+    inputs:
+      RUN_PB: false
+  - at_cycle: 76
+    inputs:
+      ESTOP: false      # 非常停止ボタン押下 (B接点 → FALSE)
+  - at_cycle: 77
+    inputs:
+      ESTOP: true       # 非常停止解除 → IDLE のまま (自動復帰なし)
+  - at_cycle: 81
+    inputs:
+      RUN_PB: true
+  - at_cycle: 82
+    inputs:
+      RUN_PB: false
+
+cycles: 85
+
+watch:
+  - LOW_SENS
+  - HIGH_SENS
+  - RUN_PB
+  - STOP_PB
+  - ESTOP
+  - PUMP_FAULT
+  - FAULT_RESET
+  - STATE
+  - PUMP_MOTOR
+  - RUN_LAMP
+  - ALARM_LAMP
