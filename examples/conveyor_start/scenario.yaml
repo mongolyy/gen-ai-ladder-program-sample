@@ -1,0 +1,67 @@
+meta:
+  name: "conveyor_start Operation Verification"
+
+# 確認シナリオ:
+#   Scene1 (cycle  3): 起動ボタン → 通常停止 (cycle 20)
+#   Scene2 (cycle 25): 再起動    → ワーク検出で一時停止 (cycle 32) → 自動再開 (cycle 38)
+#   Scene3 (cycle 45): 非常停止  → 解除後も自動復帰しないことを確認 (cycle 46)
+#   Scene4 (cycle 50): 非常停止解除後の手動再起動
+
+initial:
+  ESTOP: true       # B接点: 通常 ON (健全)
+
+steps:
+  # --- Scene 1: 起動 → 通常停止 ---
+  - at_cycle: 3
+    inputs:
+      START_PB: true
+  - at_cycle: 4
+    inputs:
+      START_PB: false
+  - at_cycle: 20
+    inputs:
+      STOP_PB: true
+  - at_cycle: 21
+    inputs:
+      STOP_PB: false
+
+  # --- Scene 2: 再起動 → ワーク検出で一時停止 → 自動再開 ---
+  - at_cycle: 25
+    inputs:
+      START_PB: true
+  - at_cycle: 26
+    inputs:
+      START_PB: false
+  - at_cycle: 32
+    inputs:
+      WORK_SENS: true   # ワーク検出 → CONVEYOR_MOTOR 停止、M_RUNNING は保持
+  - at_cycle: 38
+    inputs:
+      WORK_SENS: false  # ワーク除去 → CONVEYOR_MOTOR 自動再開
+
+  # --- Scene 3: 非常停止 ---
+  - at_cycle: 45
+    inputs:
+      ESTOP: false      # 非常停止ボタン押下（B接点 → FALSE）
+  - at_cycle: 46
+    inputs:
+      ESTOP: true       # 非常停止解除 → M_RUNNING=FALSE のまま（自動復帰なし）
+
+  # --- Scene 4: 手動再起動 ---
+  - at_cycle: 50
+    inputs:
+      START_PB: true
+  - at_cycle: 51
+    inputs:
+      START_PB: false
+
+cycles: 60
+
+watch:
+  - START_PB
+  - STOP_PB
+  - ESTOP
+  - WORK_SENS
+  - M_RUNNING
+  - CONVEYOR_MOTOR
+  - RUN_LAMP
