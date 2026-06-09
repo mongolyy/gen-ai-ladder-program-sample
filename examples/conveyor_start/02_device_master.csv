@@ -1,0 +1,8 @@
+label,device,type,io,comment
+START_PB,X0,BOOL,input,起動押しボタン(A接点)
+STOP_PB,X1,BOOL,input,停止押しボタン(A接点)
+ESTOP,X2,BOOL,input,非常停止(B接点 通常ON)
+WORK_SENS,X3,BOOL,input,出口ワーク検出センサ(ワーク有でON)
+CONVEYOR_MOTOR,Y10,BOOL,output,コンベアモータ
+RUN_LAMP,Y11,BOOL,output,運転ランプ
+M_RUNNING,M0,BOOL,internal,運転中フラグ(自己保持)
