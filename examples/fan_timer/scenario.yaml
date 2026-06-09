@@ -1,0 +1,72 @@
+meta:
+  name: "fan_timer Operation Verification"
+
+# シミュレーション注意事項:
+#   PT=T#30m はシミュレーターで 30サイクルとして模擬（実時間ではなくロジック検証用）。
+#
+# 確認シナリオ:
+#   Scene 1 (cycle  3): 起動ボタン → タイマー自動停止 (cycle 33)
+#   Scene 2 (cycle 38): 再起動    → 手動停止 (cycle 48)
+#   Scene 3 (cycle 53): 再起動    → 非常停止 (cycle 58)
+#   Scene 4 (cycle 63): 非常停止解除後 → 手動再起動（自動復帰しないことを確認）
+
+initial:
+  ESTOP: true       # B接点: 通常 ON (健全)
+
+steps:
+  # --- Scene 1: 起動 → タイマー自動停止 ---
+  - at_cycle: 3
+    inputs:
+      RUN_PB: true
+  - at_cycle: 4
+    inputs:
+      RUN_PB: false
+  # T_AUTO_STOP が 30サイクル計時 → cycle 33 で自動停止
+
+  # --- Scene 2: 再起動 → 手動停止 ---
+  - at_cycle: 38
+    inputs:
+      RUN_PB: true
+  - at_cycle: 39
+    inputs:
+      RUN_PB: false
+  - at_cycle: 48
+    inputs:
+      STOP_PB: true
+  - at_cycle: 49
+    inputs:
+      STOP_PB: false
+
+  # --- Scene 3: 再起動 → 非常停止 ---
+  - at_cycle: 53
+    inputs:
+      RUN_PB: true
+  - at_cycle: 54
+    inputs:
+      RUN_PB: false
+  - at_cycle: 58
+    inputs:
+      ESTOP: false   # 非常停止ボタン押下（B接点 → FALSE）
+  - at_cycle: 59
+    inputs:
+      ESTOP: true    # 非常停止解除
+  # 解除後も M_RUNNING=FALSE のまま（自動復帰なし）
+
+  # --- Scene 4: 手動再起動 ---
+  - at_cycle: 63
+    inputs:
+      RUN_PB: true
+  - at_cycle: 64
+    inputs:
+      RUN_PB: false
+
+cycles: 70
+
+watch:
+  - RUN_PB
+  - STOP_PB
+  - ESTOP
+  - M_RUNNING
+  - T_AUTO_STOP_Q
+  - FAN_MOTOR
+  - RUN_LAMP
