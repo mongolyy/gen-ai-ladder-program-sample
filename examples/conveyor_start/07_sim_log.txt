@@ -1,0 +1,118 @@
+=== シミュレーションログ ===
+
+[Cycle   0]
+   ← START_PB             = False
+   ← STOP_PB              = False
+   ← ESTOP                = True
+   ← WORK_SENS            = False
+   ← CONVEYOR_MOTOR       = False
+   ← RUN_LAMP             = False
+   ← M_RUNNING            = False
+
+[Cycle   3]
+   ← START_PB             = True
+     STOP_PB              = False
+     ESTOP                = True
+     WORK_SENS            = False
+   ← CONVEYOR_MOTOR       = True
+   ← RUN_LAMP             = True
+   ← M_RUNNING            = True
+
+[Cycle   4]
+   ← START_PB             = False
+     STOP_PB              = False
+     ESTOP                = True
+     WORK_SENS            = False
+     CONVEYOR_MOTOR       = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+
+[Cycle  20]
+     START_PB             = False
+   ← STOP_PB              = True
+     ESTOP                = True
+     WORK_SENS            = False
+   ← CONVEYOR_MOTOR       = False
+   ← RUN_LAMP             = False
+   ← M_RUNNING            = False
+
+[Cycle  21]
+     START_PB             = False
+   ← STOP_PB              = False
+     ESTOP                = True
+     WORK_SENS            = False
+     CONVEYOR_MOTOR       = False
+     RUN_LAMP             = False
+     M_RUNNING            = False
+
+[Cycle  25]
+   ← START_PB             = True
+     STOP_PB              = False
+     ESTOP                = True
+     WORK_SENS            = False
+   ← CONVEYOR_MOTOR       = True
+   ← RUN_LAMP             = True
+   ← M_RUNNING            = True
+
+[Cycle  26]
+   ← START_PB             = False
+     STOP_PB              = False
+     ESTOP                = True
+     WORK_SENS            = False
+     CONVEYOR_MOTOR       = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+
+[Cycle  32]
+     START_PB             = False
+     STOP_PB              = False
+     ESTOP                = True
+   ← WORK_SENS            = True
+   ← CONVEYOR_MOTOR       = False
+     RUN_LAMP             = True
+     M_RUNNING            = True
+
+[Cycle  38]
+     START_PB             = False
+     STOP_PB              = False
+     ESTOP                = True
+   ← WORK_SENS            = False
+   ← CONVEYOR_MOTOR       = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+
+[Cycle  45]
+     START_PB             = False
+     STOP_PB              = False
+   ← ESTOP                = False
+     WORK_SENS            = False
+   ← CONVEYOR_MOTOR       = False
+   ← RUN_LAMP             = False
+   ← M_RUNNING            = False
+
+[Cycle  46]
+     START_PB             = False
+     STOP_PB              = False
+   ← ESTOP                = True
+     WORK_SENS            = False
+     CONVEYOR_MOTOR       = False
+     RUN_LAMP             = False
+     M_RUNNING            = False
+
+[Cycle  50]
+   ← START_PB             = True
+     STOP_PB              = False
+     ESTOP                = True
+     WORK_SENS            = False
+   ← CONVEYOR_MOTOR       = True
+   ← RUN_LAMP             = True
+   ← M_RUNNING            = True
+
+[Cycle  51]
+   ← START_PB             = False
+     STOP_PB              = False
+     ESTOP                = True
+     WORK_SENS            = False
+     CONVEYOR_MOTOR       = True
+     RUN_LAMP             = True
+     M_RUNNING            = True

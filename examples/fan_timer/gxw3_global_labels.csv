@@ -1,0 +1,9 @@
+﻿ラベル名,データ型,クラス,割付(デバイス/ラベル),コメント
+RUN_PB,ビット,VAR_GLOBAL,X0,起動押しボタン(A接点)
+STOP_PB,ビット,VAR_GLOBAL,X1,停止押しボタン(A接点)
+ESTOP,ビット,VAR_GLOBAL,X2,非常停止(B接点 通常ON)
+FAN_MOTOR,ビット,VAR_GLOBAL,Y10,換気ファン
+RUN_LAMP,ビット,VAR_GLOBAL,Y11,運転ランプ
+M_RUNNING,ビット,VAR_GLOBAL,M0,運転中フラグ(自己保持)
+M_RUN_PB_PREV,ビット,VAR_GLOBAL,M1,RUN_PB前回値(立ち上がりエッジ検出用)
+T_AUTO_STOP,TON,VAR_GLOBAL,,自動停止タイマー(TON PT=T#30m)

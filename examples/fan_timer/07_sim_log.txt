@@ -1,0 +1,831 @@
+=== シミュレーションログ ===
+
+[Cycle   0]
+   ← RUN_PB               = False
+   ← STOP_PB              = False
+   ← ESTOP                = True
+   ← FAN_MOTOR            = False
+   ← RUN_LAMP             = False
+   ← M_RUNNING            = False
+   ← M_RUN_PB_PREV        = False
+   ← T_AUTO_STOP          = False
+
+[Cycle   3]
+   ← RUN_PB               = True
+     STOP_PB              = False
+     ESTOP                = True
+   ← FAN_MOTOR            = True
+   ← RUN_LAMP             = True
+   ← M_RUNNING            = True
+   ← M_RUN_PB_PREV        = True
+     T_AUTO_STOP          = False
+
+[Cycle   4]
+   ← RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+   ← M_RUN_PB_PREV        = False
+     T_AUTO_STOP          = False
+
+[Cycle   5]
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = False
+     T_AUTO_STOP          = False
+
+[Cycle   6]
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = False
+     T_AUTO_STOP          = False
+
+[Cycle   7]
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = False
+     T_AUTO_STOP          = False
+
+[Cycle   8]
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = False
+     T_AUTO_STOP          = False
+
+[Cycle   9]
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = False
+     T_AUTO_STOP          = False
+
+[Cycle  10]
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = False
+     T_AUTO_STOP          = False
+
+[Cycle  11]
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = False
+     T_AUTO_STOP          = False
+
+[Cycle  12]
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = False
+     T_AUTO_STOP          = False
+
+[Cycle  13]
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = False
+     T_AUTO_STOP          = False
+
+[Cycle  14]
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = False
+     T_AUTO_STOP          = False
+
+[Cycle  15]
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = False
+     T_AUTO_STOP          = False
+
+[Cycle  16]
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = False
+     T_AUTO_STOP          = False
+
+[Cycle  17]
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = False
+     T_AUTO_STOP          = False
+
+[Cycle  18]
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = False
+     T_AUTO_STOP          = False
+
+[Cycle  19]
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = False
+     T_AUTO_STOP          = False
+
+[Cycle  20]
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = False
+     T_AUTO_STOP          = False
+
+[Cycle  21]
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = False
+     T_AUTO_STOP          = False
+
+[Cycle  22]
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = False
+     T_AUTO_STOP          = False
+
+[Cycle  23]
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = False
+     T_AUTO_STOP          = False
+
+[Cycle  24]
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = False
+     T_AUTO_STOP          = False
+
+[Cycle  25]
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = False
+     T_AUTO_STOP          = False
+
+[Cycle  26]
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = False
+     T_AUTO_STOP          = False
+
+[Cycle  27]
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = False
+     T_AUTO_STOP          = False
+
+[Cycle  28]
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = False
+     T_AUTO_STOP          = False
+
+[Cycle  29]
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = False
+     T_AUTO_STOP          = False
+
+[Cycle  30]
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = False
+     T_AUTO_STOP          = False
+
+[Cycle  31]
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = False
+     T_AUTO_STOP          = False
+
+[Cycle  32]
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = False
+     T_AUTO_STOP          = False
+
+[Cycle  33]
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+   ← FAN_MOTOR            = False
+   ← RUN_LAMP             = False
+   ← M_RUNNING            = False
+     M_RUN_PB_PREV        = False
+     T_AUTO_STOP          = False
+
+[Cycle  38]
+   ← RUN_PB               = True
+     STOP_PB              = False
+     ESTOP                = True
+   ← FAN_MOTOR            = True
+   ← RUN_LAMP             = True
+   ← M_RUNNING            = True
+   ← M_RUN_PB_PREV        = True
+     T_AUTO_STOP          = False
+
+[Cycle  39]
+   ← RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+   ← M_RUN_PB_PREV        = False
+     T_AUTO_STOP          = False
+
+[Cycle  40]
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = False
+     T_AUTO_STOP          = False
+
+[Cycle  41]
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = False
+     T_AUTO_STOP          = False
+
+[Cycle  42]
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = False
+     T_AUTO_STOP          = False
+
+[Cycle  43]
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = False
+     T_AUTO_STOP          = False
+
+[Cycle  44]
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = False
+     T_AUTO_STOP          = False
+
+[Cycle  45]
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = False
+     T_AUTO_STOP          = False
+
+[Cycle  46]
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = False
+     T_AUTO_STOP          = False
+
+[Cycle  47]
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = False
+     T_AUTO_STOP          = False
+
+[Cycle  48]
+     RUN_PB               = False
+   ← STOP_PB              = True
+     ESTOP                = True
+   ← FAN_MOTOR            = False
+   ← RUN_LAMP             = False
+   ← M_RUNNING            = False
+     M_RUN_PB_PREV        = False
+     T_AUTO_STOP          = False
+
+[Cycle  49]
+     RUN_PB               = False
+   ← STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = False
+     RUN_LAMP             = False
+     M_RUNNING            = False
+     M_RUN_PB_PREV        = False
+     T_AUTO_STOP          = False
+
+[Cycle  53]
+   ← RUN_PB               = True
+     STOP_PB              = False
+     ESTOP                = True
+   ← FAN_MOTOR            = True
+   ← RUN_LAMP             = True
+   ← M_RUNNING            = True
+   ← M_RUN_PB_PREV        = True
+     T_AUTO_STOP          = False
+
+[Cycle  54]
+     RUN_PB               = True
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = True
+     T_AUTO_STOP          = False
+
+[Cycle  55]
+     RUN_PB               = True
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = True
+     T_AUTO_STOP          = False
+
+[Cycle  56]
+     RUN_PB               = True
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = True
+     T_AUTO_STOP          = False
+
+[Cycle  57]
+     RUN_PB               = True
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = True
+     T_AUTO_STOP          = False
+
+[Cycle  58]
+     RUN_PB               = True
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = True
+     T_AUTO_STOP          = False
+
+[Cycle  59]
+     RUN_PB               = True
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = True
+     T_AUTO_STOP          = False
+
+[Cycle  60]
+     RUN_PB               = True
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = True
+     T_AUTO_STOP          = False
+
+[Cycle  61]
+     RUN_PB               = True
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = True
+     T_AUTO_STOP          = False
+
+[Cycle  62]
+     RUN_PB               = True
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = True
+     T_AUTO_STOP          = False
+
+[Cycle  63]
+     RUN_PB               = True
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = True
+     T_AUTO_STOP          = False
+
+[Cycle  64]
+     RUN_PB               = True
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = True
+     T_AUTO_STOP          = False
+
+[Cycle  65]
+     RUN_PB               = True
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = True
+     T_AUTO_STOP          = False
+
+[Cycle  66]
+     RUN_PB               = True
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = True
+     T_AUTO_STOP          = False
+
+[Cycle  67]
+     RUN_PB               = True
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = True
+     T_AUTO_STOP          = False
+
+[Cycle  68]
+     RUN_PB               = True
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = True
+     T_AUTO_STOP          = False
+
+[Cycle  69]
+     RUN_PB               = True
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = True
+     T_AUTO_STOP          = False
+
+[Cycle  70]
+     RUN_PB               = True
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = True
+     T_AUTO_STOP          = False
+
+[Cycle  71]
+     RUN_PB               = True
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = True
+     T_AUTO_STOP          = False
+
+[Cycle  72]
+     RUN_PB               = True
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = True
+     T_AUTO_STOP          = False
+
+[Cycle  73]
+     RUN_PB               = True
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = True
+     T_AUTO_STOP          = False
+
+[Cycle  74]
+     RUN_PB               = True
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = True
+     T_AUTO_STOP          = False
+
+[Cycle  75]
+     RUN_PB               = True
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = True
+     T_AUTO_STOP          = False
+
+[Cycle  76]
+     RUN_PB               = True
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = True
+     T_AUTO_STOP          = False
+
+[Cycle  77]
+     RUN_PB               = True
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = True
+     T_AUTO_STOP          = False
+
+[Cycle  78]
+     RUN_PB               = True
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = True
+     T_AUTO_STOP          = False
+
+[Cycle  79]
+     RUN_PB               = True
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = True
+     T_AUTO_STOP          = False
+
+[Cycle  80]
+     RUN_PB               = True
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = True
+     T_AUTO_STOP          = False
+
+[Cycle  81]
+     RUN_PB               = True
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = True
+     T_AUTO_STOP          = False
+
+[Cycle  82]
+     RUN_PB               = True
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = True
+     T_AUTO_STOP          = False
+
+[Cycle  83]
+     RUN_PB               = True
+     STOP_PB              = False
+     ESTOP                = True
+   ← FAN_MOTOR            = False
+   ← RUN_LAMP             = False
+   ← M_RUNNING            = False
+     M_RUN_PB_PREV        = True
+     T_AUTO_STOP          = False
+
+[Cycle  90]
+   ← RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = False
+     RUN_LAMP             = False
+     M_RUNNING            = False
+   ← M_RUN_PB_PREV        = False
+     T_AUTO_STOP          = False
+
+[Cycle  93]
+   ← RUN_PB               = True
+     STOP_PB              = False
+     ESTOP                = True
+   ← FAN_MOTOR            = True
+   ← RUN_LAMP             = True
+   ← M_RUNNING            = True
+   ← M_RUN_PB_PREV        = True
+     T_AUTO_STOP          = False
+
+[Cycle  94]
+   ← RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+   ← M_RUN_PB_PREV        = False
+     T_AUTO_STOP          = False
+
+[Cycle  95]
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = False
+     T_AUTO_STOP          = False
+
+[Cycle  96]
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = False
+     T_AUTO_STOP          = False
+
+[Cycle  97]
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = False
+     T_AUTO_STOP          = False
+
+[Cycle  98]
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = False
+     T_AUTO_STOP          = False
+
+[Cycle  99]
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     FAN_MOTOR            = True
+     RUN_LAMP             = True
+     M_RUNNING            = True
+     M_RUN_PB_PREV        = False
+     T_AUTO_STOP          = False

@@ -1,4 +1,4 @@
-# 生成サンプル: コンベア起動制御（conveyor_start）
+# 生成サンプル: 換気ファン タイマー自動停止制御（fan_timer）
 
 `ladder-gen` スキルで、自然言語の制御仕様から ST（構造化テキスト）を生成した一連の
 中間成果物のサンプル。各工程のゲートを通過した結果をそのまま収録している。
@@ -8,25 +8,34 @@
 
 ## 題材
 
-1本のベルトコンベアを押しボタンで起動/停止する制御。自己保持方式、状態遷移なし。
+換気ファンを押しボタンで起動し、一定時間（30分）後に自動停止する制御。
 
 - 起動/停止ボタンで運転（自己保持）
+- **TON タイマーで 30 分後に自動停止**（← conveyor_start との主な差分）
 - 非常停止（B接点・フェイルセーフ）が最優先
-- 出口ワーク検出センサで**一時停止**（除去で自動再開。運転フラグは保持）
+- 手動停止も可能
+
+`conveyor_start` がシンプルな自己保持制御の例であるのに対し、
+このサンプルは **タイマー（TON）を組み合わせた自動停止** の実装パターンを示す。
 
 ## 生成された ST（本体）
 
 ```st
-M_RUNNING      := (START_PB OR M_RUNNING) AND NOT STOP_PB AND ESTOP;
-CONVEYOR_MOTOR := M_RUNNING AND ESTOP AND NOT WORK_SENS;
-RUN_LAMP       := M_RUNNING;
+M_RUNNING    := ((RUN_PB AND NOT M_RUN_PB_PREV) OR M_RUNNING) AND NOT STOP_PB AND ESTOP AND NOT T_AUTO_STOP.Q;
+T_AUTO_STOP(IN := M_RUNNING, PT := T#30m);
+FAN_MOTOR    := M_RUNNING AND ESTOP;
+RUN_LAMP     := M_RUNNING;
+M_RUN_PB_PREV := RUN_PB;
 ```
+
+`RUN_PB` の立ち上がりエッジ検出（`AND NOT M_RUN_PB_PREV`）を使用。
+押しっぱなし中はタイマー満了後に自動停止し、そのまま再起動しない。
 
 ## ファイル一覧
 
 | ファイル | 工程 | 内容 |
 |---|---|---|
-| `01_structured_spec.yaml` | ② 構造化仕様 | I/O・内部リレー・インターロック・安全要件・前提 |
+| `01_structured_spec.yaml` | ② 構造化仕様 | I/O・内部リレー・タイマー・インターロック・安全要件・前提 |
 | `02_device_master.csv` | ③ デバイス割付 | ラベル ↔ 物理アドレス（採番案） |
 | `03_program.st` | ④ ST 生成 | ST 本体（正） |
 | `04_static_check.txt` | ⑤ 静的チェック | ERROR 0 / WARN 0 |
@@ -35,7 +44,7 @@ RUN_LAMP       := M_RUNNING;
 | `gxw3_global_labels.csv` | ⑦ GX Works3 連携 | グローバルラベル一括取り込み用（BOM付UTF-8） |
 | `gxw3_device_comments.csv` | ⑦ GX Works3 連携 | デバイスコメント取り込み用 |
 | `gxw3_program.st` | ⑦ GX Works3 連携 | ST POU 貼り付け用 |
-| `scenario.yaml` | シミュレーション | 4シーンの入力シナリオ（起動/停止/一時停止/非常停止） |
+| `scenario.yaml` | シミュレーション | 4シーンの入力シナリオ（起動/自動停止/手動停止/非常停止） |
 | `07_timing_chart.png` | シミュレーション | タイミングチャート（PNG） |
 | `07_timing_chart_ascii.txt` | シミュレーション | タイミングチャート（ASCII テキスト） |
 | `07_sim_log.txt` | シミュレーション | スキャンサイクルシミュレーションログ |
@@ -43,17 +52,18 @@ RUN_LAMP       := M_RUNNING;
 ## タイミングチャート概要
 
 `scenario.yaml` に定義した 4 シーンのシミュレーション結果。
+PT=T#30m はシミュレーター上で **30 スキャンサイクル**として模擬している（ロジック検証用）。
 
 | Cycle | イベント |
 |-------|---------|
-| 3     | START_PB → コンベア起動（自己保持） |
-| 20    | STOP_PB → 通常停止 |
-| 25    | START_PB → 再起動 |
-| 32    | WORK_SENS=ON → CONVEYOR_MOTOR 停止 / **M_RUNNING・RUN_LAMP は保持** |
-| 38    | WORK_SENS=OFF → CONVEYOR_MOTOR 自動再開 |
-| 45    | ESTOP=FALSE → 非常停止（全出力 OFF） |
-| 46    | ESTOP=TRUE（解除）← M_RUNNING=OFF のまま・自動復帰なし |
-| 50    | START_PB → 手動再起動 |
+| 3     | RUN_PB パルス → ファン起動（自己保持） |
+| 33    | T_AUTO_STOP.Q パルス → タイマー自動停止 |
+| 38    | RUN_PB パルス → 再起動 |
+| 48    | STOP_PB → 手動停止 |
+| 53    | RUN_PB 押し続け → 起動 |
+| 83    | タイマー満了 → 自動停止。**RUN_PB は ON のまま**だが再起動しない（エッジ検出） |
+| 90    | RUN_PB 解除 |
+| 93    | RUN_PB パルス → 再起動 |
 
 ## 再現方法
 
