@@ -348,7 +348,12 @@ def _st_expr_to_py(expr):
     """Translate a ST expression string to a Python-evaluable string."""
     result = expr
     # FB.Q notation → FB_Q (トークナイザがドット前後にスペースを挿入するため \s* で吸収)
-    result = re.sub(r"([A-Za-z_]\w*)\s*\.\s*([A-Za-z_]\w*)", r"\1_\2", result)
+    # A.B.C のように連鎖するケースのため、変化がなくなるまで繰り返す
+    while True:
+        next_result = re.sub(r"([A-Za-z_]\w*)\s*\.\s*([A-Za-z_]\w*)", r"\1_\2", result)
+        if next_result == result:
+            break
+        result = next_result
     # TIME literals → 0 (not simulated)
     result = re.sub(r"\bT#[^\s;,)]+|\bTIME#[^\s;,)]+", "0", result)
     for pattern, repl in _OP_MAP:

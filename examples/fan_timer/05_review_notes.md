@@ -9,10 +9,11 @@
 ## 生成ロジック（要点）
 
 ```st
-M_RUNNING    := (RUN_PB OR M_RUNNING) AND NOT STOP_PB AND ESTOP AND NOT T_AUTO_STOP.Q;
+M_RUNNING    := ((RUN_PB AND NOT M_RUN_PB_PREV) OR M_RUNNING) AND NOT STOP_PB AND ESTOP AND NOT T_AUTO_STOP.Q;
 T_AUTO_STOP(IN := M_RUNNING, PT := T#30m);
 FAN_MOTOR    := M_RUNNING AND ESTOP;
 RUN_LAMP     := M_RUNNING;
+M_RUN_PB_PREV := RUN_PB;
 ```
 
 ## レビュー観点チェックリスト
@@ -38,18 +39,18 @@ RUN_LAMP     := M_RUNNING;
 - [ ] **セット/リセット優先**: `AND NOT STOP_PB AND ESTOP AND NOT T_AUTO_STOP.Q`。
       停止条件（STOP_PB / ESTOP / タイマー）が AND の否定側にあるため **リセット優先**。
       意図通りか確認。
-- [ ] **エッジ検出の要否**: 現状は RUN_PB の「レベル」で判定。押している間ONになるが、
-      自己保持があるため離してもONを保持する。チャタリング対策が必要なら
-      立上りエッジ検出を追加することを検討。
-- [ ] **スキャン順序依存**: `M_RUNNING` を先に確定 → タイマー IN に使用 → 出力に使用。
+- [x] **エッジ検出（対応済み）**: `RUN_PB AND NOT M_RUN_PB_PREV` による立ち上がりエッジ検出を実装済み。
+      RUN_PB を押し続けていてもタイマー満了後に自動停止し、即再起動しない。
+      `M_RUN_PB_PREV := RUN_PB` はプログラム末尾で更新し、次スキャンで参照するためスキャン順序が重要。
+- [ ] **スキャン順序依存**: `M_RUNNING` を先に確定 → タイマー IN に使用 → 出力に使用 → `M_RUN_PB_PREV` 更新。
       同一スキャン内で整合しており、順序依存の不具合なし。
 
 ### 割付
 - [ ] X/Y アドレス（X0〜X2, Y10/Y11）が実機端子と一致するか（採番案のため要確認）。
-- [ ] `M_RUNNING`(M0) に停電保持が必要か。必要ならラッチリレー L へ変更を検討
-      （現状は電源OFFでフラグクリア＝再投入時は停止状態から、で妥当と判断）。
-- [ ] `T_AUTO_STOP`(T0) の経過時間 ET は停電でリセットされる。
-      停電保持が必要な場合は別途カウンタや D レジスタで累積時間を管理することを検討。
+- [ ] `M_RUNNING`(M0)・`M_RUN_PB_PREV`(M1) に停電保持が必要か。
+      必要ならラッチリレー L へ変更を検討（現状は電源OFFでフラグクリア＝再投入時は停止状態から）。
+- [ ] `T_AUTO_STOP` は TON FB インスタンスのため物理デバイス番号なし（GX Works3 自動割付）。
+      経過時間 ET は停電でリセットされる点に注意。
 
 ## AI が置いた前提（assumptions）の確認
 
@@ -61,6 +62,7 @@ RUN_LAMP     := M_RUNNING;
 | 4 | 電源投入時 M_RUNNING=OFF（停止状態）から開始 | [ ] |
 | 5 | タイマー満了後は再RUN_PBで30分タイマーが再計時される | [ ] |
 | 6 | PT=T#30m（30分）は仮定値。実際の換気要件に合わせて変更 | [ ] |
+| 7 | RUN_PB 立ち上がりエッジ検出を実装（M_RUN_PB_PREV）。タイマー満了後の即再起動防止 | [x] |
 
 ## 次工程
 

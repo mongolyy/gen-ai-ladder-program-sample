@@ -21,11 +21,15 @@
 ## 生成された ST（本体）
 
 ```st
-M_RUNNING    := (RUN_PB OR M_RUNNING) AND NOT STOP_PB AND ESTOP AND NOT T_AUTO_STOP.Q;
+M_RUNNING    := ((RUN_PB AND NOT M_RUN_PB_PREV) OR M_RUNNING) AND NOT STOP_PB AND ESTOP AND NOT T_AUTO_STOP.Q;
 T_AUTO_STOP(IN := M_RUNNING, PT := T#30m);
 FAN_MOTOR    := M_RUNNING AND ESTOP;
 RUN_LAMP     := M_RUNNING;
+M_RUN_PB_PREV := RUN_PB;
 ```
+
+`RUN_PB` の立ち上がりエッジ検出（`AND NOT M_RUN_PB_PREV`）を使用。
+押しっぱなし中はタイマー満了後に自動停止し、そのまま再起動しない。
 
 ## ファイル一覧
 
@@ -52,14 +56,14 @@ PT=T#30m はシミュレーター上で **30 スキャンサイクル**として
 
 | Cycle | イベント |
 |-------|---------|
-| 3     | RUN_PB → ファン起動（自己保持） |
+| 3     | RUN_PB パルス → ファン起動（自己保持） |
 | 33    | T_AUTO_STOP.Q パルス → タイマー自動停止 |
-| 38    | RUN_PB → 再起動 |
+| 38    | RUN_PB パルス → 再起動 |
 | 48    | STOP_PB → 手動停止 |
-| 53    | RUN_PB → 再起動 |
-| 58    | ESTOP=FALSE → 非常停止 |
-| 59    | ESTOP=TRUE（解除）← M_RUNNING=OFF のまま・自動復帰なし |
-| 63    | RUN_PB → 手動再起動 |
+| 53    | RUN_PB 押し続け → 起動 |
+| 83    | タイマー満了 → 自動停止。**RUN_PB は ON のまま**だが再起動しない（エッジ検出） |
+| 90    | RUN_PB 解除 |
+| 93    | RUN_PB パルス → 再起動 |
 
 ## 再現方法
 
