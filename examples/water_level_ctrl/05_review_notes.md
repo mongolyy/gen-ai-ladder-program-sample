@@ -46,6 +46,9 @@ ALARM_LAMP := (STATE = 2);
 ### 制御ロジック / 状態遷移
 - [ ] **FILLING→ALARM が最優先**: `IF PUMP_FAULT THEN ... ELSIF ... END_IF` の構造で、
       PUMP_FAULT と HIGH_SENS が同時に TRUE でも ALARM 遷移が優先される。意図通りか確認。
+- [x] **停止優先（Stop Priority）**: IDLE→FILLING 条件に `NOT HIGH_SENS AND NOT STOP_PB` を追加。
+      満水中（HIGH_SENS=ON）や停止ボタン押下中（STOP_PB=ON）は RUN_PB を押しても起動しない。
+      これにより FILLING に入って即次スキャンで IDLE へ戻る「1スキャンのみの出力」を防止。
 - [ ] **FILLING→IDLE の非常停止条件**: `NOT ESTOP` をトリガとして IDLE に遷移する。
       ESTOP がトリップした次スキャンで STATE=0 になり、出力式 `AND ESTOP` も FALSEになる。
       同スキャン内で安全側へ落ちることを確認（スキャン内でCASE遷移→出力の順に実行）。
@@ -79,7 +82,7 @@ ALARM_LAMP := (STATE = 2);
 | 4 | PUMP_FAULT は A接点（異常時ON）。B接点配線なら論理反転が必要 | [ ] |
 | 5 | FAULT_RESET は NOT PUMP_FAULT かつ ESTOP 健全の状態でのみ有効 | [ ] |
 | 6 | 電源投入時 STATE=0(IDLE) から開始（D0 初期値 0） | [ ] |
-| 7 | HIGH_SENS=ON 中でも RUN_PB は IDLE→FILLING 遷移可（直後に FILLING→IDLE で戻る） | [ ] |
+| 7 | IDLE→FILLING 条件に NOT HIGH_SENS・NOT STOP_PB を追加（停止優先・チャタリング防止） | [x] |
 
 ## 次工程
 

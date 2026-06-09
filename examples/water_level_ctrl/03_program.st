@@ -22,7 +22,10 @@
    FILLING 内の IF/ELSIF は PUMP_FAULT を最優先（ELSIF より先に評価）。 *)
 CASE STATE OF
     0: (* IDLE: 待機 — ポンプ停止・異常なし *)
-        IF (LOW_SENS OR RUN_PB) AND ESTOP AND NOT PUMP_FAULT THEN
+        (* 停止優先: NOT HIGH_SENS AND NOT STOP_PB を必須条件に追加。
+           満水中または停止ボタン押下中は RUN_PB を押しても起動しない。
+           1スキャンのみ FILLING に入りポンプが瞬時 ON になるチャタリングを防止。 *)
+        IF (LOW_SENS OR RUN_PB) AND NOT HIGH_SENS AND NOT STOP_PB AND ESTOP AND NOT PUMP_FAULT THEN
             STATE := 1; (* -> FILLING *)
         END_IF;
 

@@ -81,8 +81,8 @@ states:
 transitions:
   - from: IDLE
     to: FILLING
-    condition: "(LOW_SENS OR RUN_PB) AND ESTOP AND NOT PUMP_FAULT"
-    description: 低水位検出または手動起動（かつ非常停止健全・異常なし）
+    condition: "(LOW_SENS OR RUN_PB) AND NOT HIGH_SENS AND NOT STOP_PB AND ESTOP AND NOT PUMP_FAULT"
+    description: 低水位検出または手動起動（かつ満水でなく・停止ボタン未押下・非常停止健全・異常なし）
   - from: FILLING
     to: ALARM
     condition: "PUMP_FAULT"
