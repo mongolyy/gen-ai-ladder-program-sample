@@ -1,0 +1,300 @@
+=== シミュレーションログ ===
+
+[Cycle   0]
+   ← LOW_SENS             = False
+   ← HIGH_SENS            = False
+   ← RUN_PB               = False
+   ← STOP_PB              = False
+   ← ESTOP                = True
+   ← PUMP_FAULT           = False
+   ← FAULT_RESET          = False
+   ← PUMP_MOTOR           = False
+   ← RUN_LAMP             = False
+   ← ALARM_LAMP           = False
+   ← STATE                = 0
+
+[Cycle   5]
+   ← LOW_SENS             = True
+     HIGH_SENS            = False
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     PUMP_FAULT           = False
+     FAULT_RESET          = False
+   ← PUMP_MOTOR           = True
+   ← RUN_LAMP             = True
+     ALARM_LAMP           = False
+   ← STATE                = 1
+
+[Cycle  12]
+   ← LOW_SENS             = False
+     HIGH_SENS            = False
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     PUMP_FAULT           = False
+     FAULT_RESET          = False
+     PUMP_MOTOR           = True
+     RUN_LAMP             = True
+     ALARM_LAMP           = False
+     STATE                = 1
+
+[Cycle  18]
+     LOW_SENS             = False
+   ← HIGH_SENS            = True
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     PUMP_FAULT           = False
+     FAULT_RESET          = False
+   ← PUMP_MOTOR           = False
+   ← RUN_LAMP             = False
+     ALARM_LAMP           = False
+   ← STATE                = 0
+
+[Cycle  20]
+     LOW_SENS             = False
+   ← HIGH_SENS            = False
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     PUMP_FAULT           = False
+     FAULT_RESET          = False
+     PUMP_MOTOR           = False
+     RUN_LAMP             = False
+     ALARM_LAMP           = False
+     STATE                = 0
+
+[Cycle  25]
+     LOW_SENS             = False
+     HIGH_SENS            = False
+   ← RUN_PB               = True
+     STOP_PB              = False
+     ESTOP                = True
+     PUMP_FAULT           = False
+     FAULT_RESET          = False
+   ← PUMP_MOTOR           = True
+   ← RUN_LAMP             = True
+     ALARM_LAMP           = False
+   ← STATE                = 1
+
+[Cycle  26]
+     LOW_SENS             = False
+     HIGH_SENS            = False
+   ← RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     PUMP_FAULT           = False
+     FAULT_RESET          = False
+     PUMP_MOTOR           = True
+     RUN_LAMP             = True
+     ALARM_LAMP           = False
+     STATE                = 1
+
+[Cycle  34]
+     LOW_SENS             = False
+     HIGH_SENS            = False
+     RUN_PB               = False
+   ← STOP_PB              = True
+     ESTOP                = True
+     PUMP_FAULT           = False
+     FAULT_RESET          = False
+   ← PUMP_MOTOR           = False
+   ← RUN_LAMP             = False
+     ALARM_LAMP           = False
+   ← STATE                = 0
+
+[Cycle  35]
+     LOW_SENS             = False
+     HIGH_SENS            = False
+     RUN_PB               = False
+   ← STOP_PB              = False
+     ESTOP                = True
+     PUMP_FAULT           = False
+     FAULT_RESET          = False
+     PUMP_MOTOR           = False
+     RUN_LAMP             = False
+     ALARM_LAMP           = False
+     STATE                = 0
+
+[Cycle  40]
+   ← LOW_SENS             = True
+     HIGH_SENS            = False
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     PUMP_FAULT           = False
+     FAULT_RESET          = False
+   ← PUMP_MOTOR           = True
+   ← RUN_LAMP             = True
+     ALARM_LAMP           = False
+   ← STATE                = 1
+
+[Cycle  48]
+     LOW_SENS             = True
+     HIGH_SENS            = False
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+   ← PUMP_FAULT           = True
+     FAULT_RESET          = False
+   ← PUMP_MOTOR           = False
+   ← RUN_LAMP             = False
+   ← ALARM_LAMP           = True
+   ← STATE                = 2
+
+[Cycle  53]
+     LOW_SENS             = True
+     HIGH_SENS            = False
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+   ← PUMP_FAULT           = False
+     FAULT_RESET          = False
+     PUMP_MOTOR           = False
+     RUN_LAMP             = False
+     ALARM_LAMP           = True
+     STATE                = 2
+
+[Cycle  57]
+     LOW_SENS             = True
+     HIGH_SENS            = False
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     PUMP_FAULT           = False
+   ← FAULT_RESET          = True
+     PUMP_MOTOR           = False
+     RUN_LAMP             = False
+   ← ALARM_LAMP           = False
+   ← STATE                = 0
+
+[Cycle  58]
+     LOW_SENS             = True
+     HIGH_SENS            = False
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     PUMP_FAULT           = False
+   ← FAULT_RESET          = False
+   ← PUMP_MOTOR           = True
+   ← RUN_LAMP             = True
+     ALARM_LAMP           = False
+   ← STATE                = 1
+
+[Cycle  63]
+   ← LOW_SENS             = False
+     HIGH_SENS            = False
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     PUMP_FAULT           = False
+     FAULT_RESET          = False
+     PUMP_MOTOR           = True
+     RUN_LAMP             = True
+     ALARM_LAMP           = False
+     STATE                = 1
+
+[Cycle  65]
+     LOW_SENS             = False
+   ← HIGH_SENS            = True
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     PUMP_FAULT           = False
+     FAULT_RESET          = False
+   ← PUMP_MOTOR           = False
+   ← RUN_LAMP             = False
+     ALARM_LAMP           = False
+   ← STATE                = 0
+
+[Cycle  66]
+     LOW_SENS             = False
+   ← HIGH_SENS            = False
+     RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     PUMP_FAULT           = False
+     FAULT_RESET          = False
+     PUMP_MOTOR           = False
+     RUN_LAMP             = False
+     ALARM_LAMP           = False
+     STATE                = 0
+
+[Cycle  70]
+     LOW_SENS             = False
+     HIGH_SENS            = False
+   ← RUN_PB               = True
+     STOP_PB              = False
+     ESTOP                = True
+     PUMP_FAULT           = False
+     FAULT_RESET          = False
+   ← PUMP_MOTOR           = True
+   ← RUN_LAMP             = True
+     ALARM_LAMP           = False
+   ← STATE                = 1
+
+[Cycle  71]
+     LOW_SENS             = False
+     HIGH_SENS            = False
+   ← RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     PUMP_FAULT           = False
+     FAULT_RESET          = False
+     PUMP_MOTOR           = True
+     RUN_LAMP             = True
+     ALARM_LAMP           = False
+     STATE                = 1
+
+[Cycle  76]
+     LOW_SENS             = False
+     HIGH_SENS            = False
+     RUN_PB               = False
+     STOP_PB              = False
+   ← ESTOP                = False
+     PUMP_FAULT           = False
+     FAULT_RESET          = False
+   ← PUMP_MOTOR           = False
+   ← RUN_LAMP             = False
+     ALARM_LAMP           = False
+   ← STATE                = 0
+
+[Cycle  77]
+     LOW_SENS             = False
+     HIGH_SENS            = False
+     RUN_PB               = False
+     STOP_PB              = False
+   ← ESTOP                = True
+     PUMP_FAULT           = False
+     FAULT_RESET          = False
+     PUMP_MOTOR           = False
+     RUN_LAMP             = False
+     ALARM_LAMP           = False
+     STATE                = 0
+
+[Cycle  81]
+     LOW_SENS             = False
+     HIGH_SENS            = False
+   ← RUN_PB               = True
+     STOP_PB              = False
+     ESTOP                = True
+     PUMP_FAULT           = False
+     FAULT_RESET          = False
+   ← PUMP_MOTOR           = True
+   ← RUN_LAMP             = True
+     ALARM_LAMP           = False
+   ← STATE                = 1
+
+[Cycle  82]
+     LOW_SENS             = False
+     HIGH_SENS            = False
+   ← RUN_PB               = False
+     STOP_PB              = False
+     ESTOP                = True
+     PUMP_FAULT           = False
+     FAULT_RESET          = False
+     PUMP_MOTOR           = True
+     RUN_LAMP             = True
+     ALARM_LAMP           = False
+     STATE                = 1

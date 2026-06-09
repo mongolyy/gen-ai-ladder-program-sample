@@ -1,0 +1,12 @@
+﻿ラベル名,データ型,クラス,割付(デバイス/ラベル),コメント
+LOW_SENS,ビット,VAR_GLOBAL,X0,低水位センサ(水位低でON)
+HIGH_SENS,ビット,VAR_GLOBAL,X1,高水位センサ(水位高でON)
+RUN_PB,ビット,VAR_GLOBAL,X2,手動起動ボタン(A接点)
+STOP_PB,ビット,VAR_GLOBAL,X3,手動停止ボタン(A接点)
+ESTOP,ビット,VAR_GLOBAL,X4,非常停止(B接点 通常ON)
+PUMP_FAULT,ビット,VAR_GLOBAL,X5,ポンプ異常(A接点)
+FAULT_RESET,ビット,VAR_GLOBAL,X6,異常リセットボタン(A接点)
+PUMP_MOTOR,ビット,VAR_GLOBAL,Y10,給水ポンプ
+RUN_LAMP,ビット,VAR_GLOBAL,Y11,運転ランプ
+ALARM_LAMP,ビット,VAR_GLOBAL,Y12,アラームランプ
+STATE,ワード[符号付き],VAR_GLOBAL,D0,状態変数(0:IDLE 1:FILLING 2:ALARM)

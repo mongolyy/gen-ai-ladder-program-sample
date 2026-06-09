@@ -1,0 +1,136 @@
+meta:
+  name: water_level_ctrl
+  version: "0.1.0"
+  plc: MELSEC iQ-R
+  author: gen-ai-ladder
+
+# タンクの水位を2つのセンサで監視し、給水ポンプを自動制御する。
+# 手動起動/停止も可能。ポンプ異常を検出し、解除まで自動運転を禁止する。
+# 実装方式: 状態機械（CASE文）。状態: IDLE / FILLING / ALARM。
+# 自己保持はステート変数(STATE)が担うため、内部リレーを用いた自己保持は使わない。
+
+io:
+  inputs:
+    - label: LOW_SENS
+      type: BOOL
+      description: 低水位センサ（水位が下限以下でON）
+      device: ""
+      active: high          # 水位低でON
+    - label: HIGH_SENS
+      type: BOOL
+      description: 高水位センサ（水位が上限以上でON）
+      device: ""
+      active: high          # 水位高でON
+    - label: RUN_PB
+      type: BOOL
+      description: 手動起動押しボタン
+      device: ""
+      active: high          # A接点（押すとON）
+    - label: STOP_PB
+      type: BOOL
+      description: 手動停止押しボタン
+      device: ""
+      active: high          # A接点（押すとON）
+    - label: ESTOP
+      type: BOOL
+      description: 非常停止ボタン
+      device: ""
+      active: low           # B接点（通常ON、押すとOFF＝断線時も安全側）
+    - label: PUMP_FAULT
+      type: BOOL
+      description: ポンプ異常信号（ポンプ保護リレー等からの接点）
+      device: ""
+      active: high          # A接点（異常時ON）
+    - label: FAULT_RESET
+      type: BOOL
+      description: 異常リセット押しボタン
+      device: ""
+      active: high          # A接点（押すとON）
+  outputs:
+    - label: PUMP_MOTOR
+      type: BOOL
+      description: 給水ポンプ出力
+      device: ""
+    - label: RUN_LAMP
+      type: BOOL
+      description: 運転ランプ（給水中に点灯）
+      device: ""
+    - label: ALARM_LAMP
+      type: BOOL
+      description: アラームランプ（異常中に点灯）
+      device: ""
+
+internal:
+  relays: []
+  timers: []
+  counters: []
+  data:
+    - label: STATE
+      type: INT
+      description: 状態変数 (0:IDLE 1:FILLING 2:ALARM)
+
+# 状態遷移あり（CASE 状態機械）
+states:
+  - id: IDLE
+    description: 待機（ポンプ停止・異常なし）
+  - id: FILLING
+    description: 給水中（ポンプ運転）
+  - id: ALARM
+    description: 異常（ポンプ停止・アラーム点灯。リセット待ち）
+
+transitions:
+  - from: IDLE
+    to: FILLING
+    condition: "(LOW_SENS OR RUN_PB) AND NOT HIGH_SENS AND NOT STOP_PB AND ESTOP AND NOT PUMP_FAULT"
+    description: 低水位検出または手動起動（かつ満水でなく・停止ボタン未押下・非常停止健全・異常なし）
+  - from: FILLING
+    to: ALARM
+    condition: "PUMP_FAULT"
+    description: 給水中にポンプ異常を検出（最優先遷移）
+  - from: FILLING
+    to: IDLE
+    condition: "HIGH_SENS OR STOP_PB OR NOT ESTOP"
+    description: 満水検出・手動停止・非常停止
+  - from: ALARM
+    to: IDLE
+    condition: "FAULT_RESET AND NOT PUMP_FAULT AND ESTOP"
+    description: 異常信号消滅 かつ 異常リセットボタン押下 かつ 非常停止健全
+
+interlocks:
+  - name: 非常停止中はポンプ駆動禁止
+    when: NOT ESTOP
+    forbid: PUMP_MOTOR
+  - name: 異常中はポンプ駆動禁止
+    when: PUMP_FAULT
+    forbid: PUMP_MOTOR
+
+safety:
+  estop:
+    label: ESTOP
+    active: low               # B接点（断線時に安全側）
+    on_trip: 全出力OFF＋FILLING→IDLE 遷移（ポンプ停止）
+  reset:
+    label: RUN_PB
+    description: 非常停止解除後はIDLE状態のまま。LOW_SENSがONなら自動復帰する（下記 assumptions 参照）
+
+logic:
+  - 状態遷移: CASE STATE で IDLE/FILLING/ALARM を管理。
+  - IDLE→FILLING: LOW_SENS（自動）または RUN_PB（手動）でポンプ起動。
+              ESTOP健全 かつ PUMP_FAULT未発生が前提条件。
+  - FILLING→ALARM: PUMP_FAULT が最優先。HIGH_SENS/STOP_PBより先に評価。
+  - FILLING→IDLE: HIGH_SENS（自動満水停止）/ STOP_PB（手動停止）/ NOT ESTOP（非常停止）。
+  - ALARM→IDLE: FAULT_RESET AND NOT PUMP_FAULT AND ESTOP の3条件が同時に真。
+               IDLE遷移後に LOW_SENSがONなら次スキャンで自動的に FILLING へ。
+  - ポンプ出力: (STATE = 1) AND ESTOP AND NOT PUMP_FAULT（二重安全ゲート）。
+  - 運転ランプ: (STATE = 1)（給水中のみ点灯）。
+  - アラームランプ: (STATE = 2)（ALARM状態のみ点灯）。
+
+assumptions:
+  - "AI が補完: ESTOP を B接点(active=low)として追加。断線時に安全側へ倒す前提。"
+  - "AI が補完: LOW_SENS/HIGH_SENS は水位到達でONになるA接点フロートスイッチと解釈。
+               HIGH_SENSがONの状態では手動起動(RUN_PB)もブロックされない設計（必要なら IDLE→FILLING条件に NOT HIGH_SENS を追加）。"
+  - "AI が補完: 非常停止解除後に LOW_SENS がONのままであれば、次スキャンで IDLE→FILLING に自動遷移する（水位制御の性質上、水位が低ければ自動復帰は正常動作と解釈）。安全上問題があれば IDLE→FILLING 条件に RUN_PB のエッジ検出を追加する。"
+  - "AI が補完: PUMP_FAULT は A接点（異常時ON）と解釈。B接点配線の場合は論理を反転すること。"
+  - "AI が補完: FAULT_RESET は PUMP_FAULT が FALSE（異常解除済み）かつ ESTOP 健全の状態でのみ有効。異常原因を除去せずにリセットしても ALARM のまま。"
+  - "AI が補完: 電源投入時は STATE=0(IDLE) から開始（D レジスタ初期値 0）。"
+  - "AI が補完: HIGH_SENS が ON の状態で RUN_PB を押した場合、IDLE→FILLING 遷移が発生するが、次スキャンで FILLING→IDLE（HIGH_SENS=TRUE）に戻る。実運用上問題があれば IDLE→FILLING 条件に NOT HIGH_SENS を追加すること。"
